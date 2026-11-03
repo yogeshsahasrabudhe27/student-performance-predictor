@@ -4,3 +4,5 @@ __pycache__/
 progress.json
 backup/
 .DS_Store
+user_data/
+*.imported

@@ -1,4 +1,5 @@
 import streamlit as st, os, io, base64, pickle, json
+import hashlib, hmac, re
 import html as _html
 import time
 from datetime import datetime, date, timedelta
@@ -39,7 +40,7 @@ DARK_CSS = """
 <style>
 .stApp {background:#101827 !important;}
 .stApp p, .stApp label, .stApp li {color:#F8FAFC;}
-.l1, .welcome, .sec-title, .card-title, .panel h3, .ex-sub, .subj-head, .lbl, .card-sub, .ptext, .tmsg, .tagline, .rname, .actrow, .subj-name, .heathead {color:#F8FAFC !important;}
+.l1, .l2, .welcome, .sec-title, .card-title, .panel h3, .ex-sub, .subj-head, .lbl, .card-sub, .ptext, .tmsg, .tagline, .rname, .actrow, .subj-name, .heathead {color:#F8FAFC !important;}
 .ex-date, .actdate, .legend, .subj-count, .dlabels, .months {color:#94A3B8 !important;}
 .l2 {color:#60A5FA !important;} .tagline i {background:#60A5FA !important;}
 [class*="st-key-card"], .panel, .exam, [class*="st-key-tile_"] {background:#1E293B !important; border-color:#334155 !important;}
@@ -58,7 +59,20 @@ DARK_CSS = """
 [class*="st-key-tile_sub_"] [data-testid="stHorizontalBlock"] {border-color:#334155 !important;}
 .heatpanel, .blob, .foot {background:#1E293B !important;}
 .cell {background:#334155;} .cell.fut {background:transparent;}
-.stat, .stat.mock {background:#101827 !important; border-color:#334155 !important;} .stat b {color:#F8FAFC !important;} .stat small {color:#94A3B8 !important;}
+.acct-hi {color:#F8FAFC !important;} .acct-hi small, .acct-note {color:#94A3B8 !important;}
+/* Keep the graph-side performance summary cards bright and readable in dark mode. */
+.stat, .stat.mock {
+  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%) !important;
+  border-color:var(--line) !important;
+  box-shadow:0 7px 18px rgba(20,48,94,.09) !important;
+}
+.stat .si {background:linear-gradient(145deg,#fff,var(--soft)) !important; color:#14305e !important; border-color:var(--line) !important;}
+.stat b {color:#14305e !important;}
+.stat small {color:#61738f !important;}
+.stat:hover {
+  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%) !important;
+  box-shadow:0 14px 26px rgba(20,48,94,.16) !important;
+}
 .actscroll {scrollbar-color:#475569 #1E293B;} .actscroll::-webkit-scrollbar-track {background:#1E293B;} .actscroll::-webkit-scrollbar-thumb {background:#475569;}
 
 </style>
@@ -79,8 +93,8 @@ CSS = """
 .blob .line {display:block; height:3px; width:90px; background:#5aa2ff; border-radius:3px; margin:6px auto 4px;}
 .title-row {display:inline-flex; align-items:center; gap:12px;}
 .ttl {text-align:left; line-height:1;}
-.l1 {display:block; font-size:46px; font-weight:700; color:#14305e;}
-.l2 {display:block; font-size:66px; font-weight:700; font-style:italic; color:#1f5fd1; margin-top:-4px;}
+.l1 {display:block; font-size:46px; font-weight:700; color:#061735 !important;}
+.l2 {display:block; font-size:66px; font-weight:700; font-style:italic; color:#09264F !important; margin-top:-4px;}
 .tagline {margin-top:12px; font-size:18px; color:#1c2b4a; display:flex; align-items:center; justify-content:center; gap:14px;}
 .tagline i {width:28px; height:2px; background:#14305e; display:block;}
 .gallery, .charts {display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1160px,92%); margin:26px auto 0;}
@@ -114,9 +128,10 @@ CSS = """
 .hint {margin-top:8px; font-size:12px; color:#4a5c80; text-align:center;}
 .err {margin-top:12px; font-size:13px; color:#d62b2b; text-align:center;}
 .err b {display:inline-block; width:16px; height:16px; line-height:16px; border-radius:50%; background:#d62b2b; color:#fff; font-size:11px; margin-right:6px;}
-.qbox {margin-top:26px; padding:20px 26px; border-radius:18px; text-align:center; color:#fff; background:linear-gradient(135deg,#14305e,#1f5fd1); box-shadow:0 10px 30px rgba(20,48,94,.25);}
+.qbox {width:min(1160px,92%); margin:20px auto 22px; padding:19px 26px; border:1px solid rgba(255,255,255,.18); border-radius:20px; text-align:center; color:#fff; background:linear-gradient(115deg,#071B3D 0%,#123F78 48%,#2458b8 100%); box-shadow:0 12px 28px rgba(7,27,61,.20); transition:transform .22s ease, box-shadow .22s ease;}
 .qtitle {font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#9fd0ff; margin-bottom:6px;}
-.qtext {font-size:21px; font-weight:500; line-height:1.4;}
+.qtext {font-size:21px; font-weight:600; line-height:1.4; color:#fff !important;}
+.qbox:hover {transform:translateY(-2px); box-shadow:0 16px 32px rgba(7,27,61,.26);}
 .st-key-quote [data-testid="stButton"] {display:flex; justify-content:center; margin-top:10px;}
 .st-key-quote [data-testid="stButton"] button {border-radius:999px !important; border:1.5px solid #1447a8 !important; background:#fff !important; color:#1447a8 !important; font-weight:600;}
 .st-key-quote [data-testid="stButton"] button p {color:#1447a8 !important;}
@@ -192,26 +207,325 @@ CSS = """
 .legend .lg {display:inline-flex; align-items:center; gap:4px;}
 .legend .cell {flex:0 0 14px; width:14px; height:14px; margin:0;}
 .perfgrid {display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:18px; align-items:stretch;}
-.statgrid {display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:1fr; gap:10px;}
-.stat {display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:2px; background:#eaf3ff; border:1px solid #d3e3f7; border-radius:16px; padding:10px 6px;}
-.stat.mock {background:#e4efff;}
-.stat .si {font-size:18px; line-height:1;}
-.stat b {font-size:20px; color:#14305e; line-height:1.15;}
-.stat small {font-size:11px; color:#46597d; line-height:1.2;}
+.statgrid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:minmax(84px,auto);
+  gap:12px;
+}
+.stat {
+  --accent:#3478d4;
+  --accent2:#75b2ff;
+  --soft:#e5efff;
+  --pale:#f4f8ff;
+  --line:#dce8f8;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-content:center;
+  align-items:center;
+  column-gap:10px;
+  row-gap:4px;
+  min-width:0;
+  min-height:84px;
+  padding:13px 12px 12px;
+  text-align:left;
+  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 7px 18px rgba(20,48,94,.08);
+  transition:transform .24s ease, box-shadow .24s ease, border-color .24s ease, filter .24s ease;
+}
+/* Fine gradient rail and a soft decorative glow make each metric feel distinct. */
+.stat::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:0;
+  left:15px;
+  right:15px;
+  height:4px;
+  border-radius:0 0 8px 8px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  opacity:.95;
+  transition:left .24s ease,right .24s ease,height .24s ease;
+}
+.stat::after {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  width:84px;
+  height:84px;
+  right:-42px;
+  top:-42px;
+  border-radius:50%;
+  background:var(--soft);
+  opacity:.58;
+  transition:transform .28s ease, opacity .28s ease;
+}
+.stat:nth-child(1) {--accent:#3478d4; --accent2:#75b2ff; --soft:#e5efff; --pale:#f3f8ff; --line:#dce9fb;}
+.stat:nth-child(2) {--accent:#0f9a91; --accent2:#52cbbb; --soft:#def7f2; --pale:#f1fcfa; --line:#d7f0eb;}
+.stat:nth-child(3) {--accent:#d48a20; --accent2:#ffc46b; --soft:#fff1d9; --pale:#fffaf0; --line:#f6e8ce;}
+.stat:nth-child(4) {--accent:#7658c9; --accent2:#a992f4; --soft:#eee8ff; --pale:#f8f5ff; --line:#e8e0fb;}
+.stat:nth-child(5) {--accent:#168bb5; --accent2:#63c5e2; --soft:#e0f5fc; --pale:#f2fbfe; --line:#d8eef6;}
+.stat:nth-child(6) {--accent:#c05291; --accent2:#e68bb9; --soft:#fbe8f2; --pale:#fff6fa; --line:#f3dfeb;}
+.stat:nth-child(7) {--accent:#bd8120; --accent2:#e9b34c; --soft:#fff1d8; --pale:#fffbf1; --line:#f3e8d2;}
+.stat:nth-child(8) {--accent:#64748b; --accent2:#9aabc2; --soft:#e9eef5; --pale:#f6f8fb; --line:#e1e7ef;}
+.stat .si {
+  grid-column:1;
+  grid-row:1 / span 2;
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  background:linear-gradient(145deg,#ffffff,var(--soft));
+  border:1px solid var(--line);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 4px 9px rgba(20,48,94,.06);
+  font-size:18px;
+  line-height:1;
+  transition:transform .24s ease, box-shadow .24s ease;
+}
+.stat b {
+  grid-column:2;
+  grid-row:1;
+  position:relative;
+  z-index:1;
+  display:block;
+  min-width:0;
+  white-space:nowrap;
+  font-size:20px;
+  font-weight:700;
+  color:#14305e;
+  letter-spacing:-.35px;
+  line-height:1.1;
+  transition:color .2s ease, transform .24s ease;
+}
+.stat small {
+  grid-column:2;
+  grid-row:2;
+  position:relative;
+  z-index:1;
+  display:block;
+  min-width:0;
+  font-size:10.5px;
+  color:#61738f;
+  line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.stat:hover {
+  transform:translateY(-5px);
+  border-color:var(--accent);
+  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%);
+  box-shadow:0 14px 26px rgba(20,48,94,.15);
+  filter:saturate(1.04);
+}
+.stat:hover::before {left:9px; right:9px; height:5px;}
+.stat:hover::after {transform:scale(1.45); opacity:.8;}
+.stat:hover .si {transform:translateY(-2px) rotate(-5deg) scale(1.07); box-shadow:inset 0 1px 0 #fff,0 7px 14px rgba(20,48,94,.12);}
+.stat:hover b {color:var(--accent); transform:translateX(2px);}
+.stat.mock {background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%);}
+@media (max-width:420px) {
+  .statgrid {gap:9px;}
+  .stat {grid-template-columns:34px minmax(0,1fr); column-gap:8px; padding:12px 9px 11px; min-height:78px; border-radius:15px;}
+  .stat .si {width:33px; height:33px; border-radius:12px; font-size:15px;}
+  .stat b {font-size:18px;}
+  .stat small {font-size:10px;}
+}
 .actscroll {max-height:340px; overflow-y:auto; padding-right:8px; scrollbar-width:thin; scrollbar-color:#a9c4ea #eaf3ff;}
 .actscroll::-webkit-scrollbar {width:8px;}
 .actscroll::-webkit-scrollbar-track {background:#eaf3ff; border-radius:8px;}
 .actscroll::-webkit-scrollbar-thumb {background:#a9c4ea; border-radius:8px;}
 .actscroll::-webkit-scrollbar-thumb:hover {background:#7fb0e8;}
 @media (max-width:900px) {.perfgrid {grid-template-columns:1fr;}}
-.foot {margin-top:60px; background:linear-gradient(135deg,#1f4a8c,#2d62b0); color:#fff; text-align:center; font-size:22px; font-weight:600; letter-spacing:.4px; padding:50px 16px 32px; border-radius:50% 50% 0 0 / 46px 46px 0 0;}
+[class*="st-key-calpick"] {width:min(1160px,92%); margin:22px auto 0;}
+.acct-hi {font-size:16px; color:#14305e; line-height:1.55;}
+.acct-hi small {color:#46597d; font-size:13px;}
+.acct-note {font-size:12px; color:#5b6f95; margin-top:10px; text-align:center;}
+.foot {
+  margin-top:60px;
+  background:linear-gradient(135deg,#071B3D 0%,#0B2E65 58%,#123F78 100%);
+  color:#fff; text-align:center; font-size:22px; font-weight:600;
+  letter-spacing:.4px; padding:50px 16px 32px;
+  border-radius:50% 50% 0 0 / 46px 46px 0 0;
+  box-shadow:0 -10px 28px rgba(7,27,61,.12);
+  transition:filter .25s ease, box-shadow .25s ease;
+}
+.foot:hover {
+  filter:brightness(1.08);
+  box-shadow:0 -14px 34px rgba(7,27,61,.2);
+}
 @media (max-width:720px) {.foot {font-size:16px;}}
+.st-key-account_status {width:min(520px,90%) !important; max-width:520px !important; margin:12px auto 8px !important;
+  padding:9px 14px !important; border:1px solid #c9ddf5 !important;
+  border-radius:14px !important; background:rgba(255,255,255,.72) !important;
+  box-shadow:0 4px 12px rgba(20,48,94,.08) !important;}
+.st-key-account_status [data-testid="stHorizontalBlock"] {align-items:center !important; gap:10px !important;}
+.st-key-account_status .acct-hi {font-size:14px !important; line-height:1.35 !important;}
+.st-key-account_status .acct-hi small {font-size:11px !important;}
+.st-key-account_status [data-testid="stButton"] button {min-height:36px !important; padding:4px 12px !important; border-radius:999px !important;}
+/* Login dialog: soft blue glass card with a polished Poppins look */
+[data-testid="stDialog"] [data-testid="stDialogContent"] {
+  border:1px solid rgba(255,255,255,.9) !important;
+  border-radius:24px !important;
+  background:linear-gradient(145deg,#ffffff 0%,#f4f8ff 100%) !important;
+  box-shadow:0 24px 65px rgba(20,48,94,.24) !important;
+  padding:26px 28px 22px !important;
+  animation:loginPop .28s ease-out both;
+}
+[data-testid="stDialog"] h2,
+[data-testid="stDialog"] [data-testid="stDialogHeader"] h2 {
+  color:#071B3D !important;
+  font-family:'Poppins',sans-serif !important;
+  font-weight:700 !important;
+  letter-spacing:-.5px !important;
+}
+[data-testid="stDialog"] p, [data-testid="stDialog"] label,
+[data-testid="stDialog"] [data-testid="stCaptionContainer"] {
+  font-family:'Poppins',sans-serif !important;
+  color:#526789 !important;
+}
+[data-testid="stDialog"] input {
+  background:#f1f6ff !important;
+  border:1.5px solid #c6d9f5 !important;
+  border-radius:13px !important;
+  color:#18345f !important;
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease !important;
+}
+[data-testid="stDialog"] input:hover {border-color:#7eabe9 !important; background:#fff !important;}
+[data-testid="stDialog"] input:focus {
+  border-color:#3978d7 !important;
+  box-shadow:0 0 0 4px rgba(57,120,215,.13) !important;
+}
+[data-testid="stDialog"] [data-testid="stButton"] button {
+  min-height:48px !important;
+  border:0 !important;
+  border-radius:14px !important;
+  background:linear-gradient(110deg,#061735 0%,#0B2E65 58%,#123F78 100%) !important;
+  color:#fff !important;
+  font-family:'Poppins',sans-serif !important;
+  font-weight:600 !important;
+  box-shadow:0 7px 18px rgba(7,27,61,.24) !important;
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
+}
+[data-testid="stDialog"] [data-testid="stButton"] button:hover {
+  transform:translateY(-2px) !important;
+  filter:brightness(1.07) !important;
+  box-shadow:0 12px 24px rgba(7,27,61,.34) !important;
+}
+[data-testid="stDialog"] [data-testid="stButton"] button:active {transform:translateY(0) scale(.99) !important;}
+[data-testid="stDialog"] [data-testid="stButton"] button p,
+[data-testid="stDialog"] [data-testid="stButton"] button span {color:#fff !important;}
+[data-testid="stDialog"] [data-testid="stCaptionContainer"] {font-size:12px !important; line-height:1.6 !important;}
+[data-testid="stDialog"] [data-testid="stDialogHeader"],
+[data-testid="stDialog"] [data-testid="stDialogHeader"] * {
+  color:#071B3D !important;
+}
+[data-testid="stDialog"] [data-testid="stDialogHeader"] h2 {
+  font-weight:700 !important;
+}
+/* Force the login dialog heading to deep navy (Streamlit versions use different wrappers). */
+[data-testid="stDialog"] [data-testid="stDialogHeader"],
+[data-testid="stDialog"] [data-testid="stDialogHeader"] *,
+[data-testid="stDialog"] [data-testid="stHeadingWithActionElements"],
+[data-testid="stDialog"] [data-testid="stHeadingWithActionElements"] *,
+[data-testid="stDialog"] h1,
+[data-testid="stDialog"] h2 {
+  color:#061735 !important;
+  -webkit-text-fill-color:#061735 !important;
+  opacity:1 !important;
+}
+@keyframes loginPop {from {opacity:0; transform:translateY(10px) scale(.985);} to {opacity:1; transform:translateY(0) scale(1);}}
+
 @media (max-width:720px) {
-  .gallery, .charts {grid-template-columns:1fr;}
-  .blob {width:170px; height:120px; padding:14px 10px 0 40px;}
-  .blob .script {font-size:16px;}
-  .plane {display:none;}
-  .l1 {font-size:28px;} .l2 {font-size:40px;} .tagline {font-size:13px;}
+  /* Compact, non-overlapping phone header */
+  .hdr {padding:18px 14px 0 !important; text-align:center;}
+  .plane {display:none !important;}
+  .title-row {display:flex !important; align-items:center; justify-content:center; gap:8px; width:100%;}
+  .title-row > svg {width:44px !important; height:auto !important; flex:0 0 44px;}
+  .ttl {min-width:0; text-align:left;}
+  .l1 {font-size:clamp(21px,6vw,27px) !important; line-height:1.12; white-space:normal;}
+  .l2 {font-size:clamp(31px,8.5vw,38px) !important; line-height:1.05; margin-top:1px !important;}
+
+  /* Move the slogan badge below the title so it never covers the heading */
+  .blob {
+    position:relative !important; top:auto !important; right:auto !important;
+    display:block; width:max-content !important; max-width:92%; height:auto !important;
+    margin:13px auto 0; padding:8px 18px 7px !important;
+    border-radius:16px !important; text-align:center;
+    background:linear-gradient(135deg,#071B3D,#17427b) !important;
+    box-shadow:0 6px 16px rgba(7,27,61,.16);
+  }
+  .blob .script {font-size:13px !important; line-height:1.12; transform:none !important;}
+  .blob .line {width:58px !important; height:2px !important; margin:5px auto 3px !important;}
+  .blob svg {width:14px; height:13px;}
+  .tagline {font-size:11px !important; line-height:1.4; margin:10px auto 0; gap:7px; max-width:96%; flex-wrap:wrap;}
+  .tagline i {width:14px; flex:0 0 14px;}
+
+  .welcome {font-size:18px !important; line-height:1.3; margin:15px 14px 0 !important;}
+  .clock {display:grid !important; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; padding:0 14px;}
+  .cchip {display:flex; justify-content:center; align-items:center; text-align:center; min-width:0; padding:8px 6px; font-size:11px !important; line-height:1.25; white-space:normal;}
+  .qbox {width:calc(100% - 28px) !important; margin:18px auto 18px !important; padding:15px 14px !important; border-radius:16px !important;}
+  .qtitle {font-size:10px !important; letter-spacing:1.6px !important;}
+  .qtext {font-size:15px !important; line-height:1.45 !important;}
+
+  /* Reduce the very tall image stack and keep it aligned to the screen */
+  .gallery, .charts {
+    display:grid !important; grid-template-columns:minmax(0,1fr) !important;
+    width:calc(100% - 28px) !important; max-width:520px;
+    gap:14px !important; margin:18px auto 0 !important;
+  }
+  .pic {height:auto !important; min-height:0; max-height:none; aspect-ratio:2.05 / 1; border-radius:15px;}
+  .pic img, .pic .art {width:100%; height:100%; object-fit:cover;}
+  .pic .note {font-size:18px !important; line-height:1.08;}
+  .pic.left .note {left:6%; top:17%;}
+  .pic.right .note {right:4%; top:5%; font-size:17px !important;}
+
+  .sec-title {
+    width:calc(100% - 30px) !important; max-width:520px;
+    margin:28px auto 0 !important; padding:0 4px;
+    font-size:19px !important; line-height:1.32;
+    overflow-wrap:anywhere; text-align:center;
+  }
+  .sec-title::after {margin:7px auto 0;}
+  .st-key-card_exam, [class*="st-key-card_target"], [class*="st-key-calpick"] {
+    width:calc(100% - 28px) !important; max-width:520px;
+    margin:14px auto 0 !important;
+  }
+  [class*="st-key-card"] {padding:16px 14px 14px !important; margin-top:18px !important;}
+  .card-title {font-size:19px !important; line-height:1.3;}
+  .card-sub {font-size:12px !important; line-height:1.4;}
+  .foot {font-size:14px !important; padding:34px 14px 24px !important; margin-top:36px !important;}
+}
+
+@media (max-width:420px) {
+  .hdr {padding-left:10px !important; padding-right:10px !important;}
+  .title-row > svg {width:38px !important; flex-basis:38px;}
+  .l1 {font-size:22px !important;}
+  .l2 {font-size:33px !important;}
+  .tagline {font-size:10px !important; gap:5px;}
+  .tagline i {width:10px; flex-basis:10px;}
+  .gallery, .charts {width:calc(100% - 22px) !important; gap:12px !important;}
+  .pic {aspect-ratio:1.95 / 1;}
+  .clock {padding:0 11px;}
+  .cchip {font-size:10px !important;}
+  .sec-title {font-size:18px !important;}
+}
+
+.stat:focus-visible {outline:3px solid rgba(52,120,212,.28); outline-offset:3px;}
+@media (hover:none) {
+  .stat:hover {transform:none; box-shadow:0 7px 18px rgba(20,48,94,.08);}
+  .stat:hover .si {transform:none;}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pic, .panel, .stat, .stat .si, .stat b {transition:none !important; animation:none !important;}
 }
 </style>
 """
@@ -352,7 +666,7 @@ def live_clock():
 
 
 # ---------- planner: exams, topics, progress ----------
-PROGRESS_FILE = "progress.json"
+PROGRESS_FILE = "progress.json"   # old shared file: only used once, to import your earlier data
 
 
 def today_date():
@@ -363,27 +677,131 @@ def new_id():
     return str(int(time.time() * 1000)) + os.urandom(2).hex()
 
 
-def load_progress():
-    p = {"exams": [], "subjects": {}, "target_hours": None, "log": {}, "mocks": {}}
+# ---------- accounts: every person gets private data ----------
+USER_DIR = "user_data"
+USERS_FILE = f"{USER_DIR}/users.json"
+
+
+def _read_json(path):
     try:
-        with open(PROGRESS_FILE, encoding="utf-8") as f:
-            data = json.load(f)
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+def _write_json(path, data):
+    try:
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f)
+    except Exception:
+        pass
+
+
+def slugify(name):
+    return re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")[:40]
+
+
+def hash_pin(pin, salt_hex):
+    return hashlib.pbkdf2_hmac("sha256", pin.encode(), bytes.fromhex(salt_hex), 120_000).hex()
+
+
+def progress_path(slug):
+    return f"{USER_DIR}/progress_{slug}.json"
+
+
+def parse_progress(data):
+    p = {"exams": [], "subjects": {}, "target_hours": None, "log": {}, "mocks": {}}
+    if isinstance(data, dict):
         for k, typ in (("exams", list), ("subjects", dict), ("log", dict), ("mocks", dict)):
             if isinstance(data.get(k), typ):
                 p[k] = data[k]
         if isinstance(data.get("target_hours"), (int, float)):
             p["target_hours"] = float(data["target_hours"])
-    except Exception:
-        pass
     return p
 
 
+def load_progress():
+    """Signed in: your own file. Not signed in (guest): data kept only in this browser session."""
+    slug = st.session_state.get("user")
+    if slug:
+        return parse_progress(_read_json(progress_path(slug)))
+    return parse_progress(st.session_state.get("guest_progress"))
+
+
 def save_progress(p):
-    try:
-        with open(PROGRESS_FILE, "w", encoding="utf-8") as f:
-            json.dump(p, f)
-    except Exception:
-        pass
+    slug = st.session_state.get("user")
+    if slug:
+        _write_json(progress_path(slug), p)
+    else:
+        st.session_state["guest_progress"] = p
+
+
+def _switch_user(slug, name):
+    for k in list(st.session_state.keys()):      # forget the previous person's inputs
+        if k != "dark_mode":
+            del st.session_state[k]
+    if slug:
+        st.session_state["user"] = slug
+        st.session_state["user_name"] = name
+        st.query_params["name"] = name           # pre-fills the name box next time
+
+
+def do_login():
+    name = (st.session_state.get("acc_name") or "").strip()
+    pin = (st.session_state.get("acc_pin") or "").strip()
+    slug = slugify(name)
+    if len(name) < 2 or not slug:
+        st.session_state["a_msg"] = ("err", "Enter your name (at least 2 letters).")
+        return
+    if not (pin.isdigit() and 4 <= len(pin) <= 8):
+        st.session_state["a_msg"] = ("err", "The PIN must be 4 to 8 digits.")
+        return
+    users = _read_json(USERS_FILE)
+    users = users if isinstance(users, dict) else {}
+    u = users.get(slug)
+    now = time.time()
+    if u:
+        if now < u.get("locked_until", 0):
+            mins = int((u["locked_until"] - now) // 60) + 1
+            st.session_state["a_msg"] = ("err", f"Too many wrong tries. Please try again in {mins} minute(s).")
+            return
+        if hmac.compare_digest(hash_pin(pin, u["salt"]), u["hash"]):
+            u["fails"] = 0
+            _write_json(USERS_FILE, users)
+            _switch_user(slug, u["name"])
+            st.session_state.pop("a_msg", None)
+        else:
+            u["fails"] = u.get("fails", 0) + 1
+            if u["fails"] >= 5:
+                u["fails"], u["locked_until"] = 0, now + 300
+            _write_json(USERS_FILE, users)
+            st.session_state["a_msg"] = ("err", "Wrong PIN for this name. If the name belongs to someone else, choose a different name.")
+        return
+    # new account
+    base = None
+    if not users and os.path.exists(PROGRESS_FILE):      # the very first account keeps the earlier shared data
+        base = _read_json(PROGRESS_FILE)
+        try:
+            os.replace(PROGRESS_FILE, PROGRESS_FILE + ".imported")
+        except Exception:
+            pass
+    if base is None:
+        guest = parse_progress(st.session_state.get("guest_progress"))
+        if guest["subjects"] or guest["exams"] or guest["log"] or guest["mocks"] or guest["target_hours"]:
+            base = guest                                  # keep what the guest already entered
+    salt = os.urandom(16).hex()
+    users[slug] = {"name": name, "salt": salt, "hash": hash_pin(pin, salt), "fails": 0, "locked_until": 0}
+    _write_json(USERS_FILE, users)
+    _write_json(progress_path(slug), parse_progress(base))
+    _switch_user(slug, name)
+    st.session_state.pop("a_msg", None)
+
+
+def do_logout():
+    _switch_user(None, None)
+    st.session_state.pop("a_msg", None)
 
 
 def show_msg(key):
@@ -769,6 +1187,23 @@ def recent_html(p):
     return f'<div class="panel"><h3>🕘 Recent activity ({len(ev)})</h3><div class="actscroll">{rows}</div></div>'
 
 
+QUOTE_SECONDS = 8   # a new quote appears automatically every 8 seconds
+
+
+@st.fragment(run_every=QUOTE_SECONDS)
+def rotating_quote():
+    res_now = st.session_state.get("res")
+    if res_now:
+        m = predict(res_now[0], res_now[1], res_now[2])
+        tier = "low" if m < 50 else "mid" if m < 75 else "high"
+    else:
+        tier = "general"
+    pool = QUOTES[tier]
+    quote = pool[int(time.time() // QUOTE_SECONDS) % len(pool)]
+    st.markdown(f'<div class="qbox"><div class="qtitle">💪 Daily motivation</div><div class="qtext">“{quote}”</div></div>',
+                unsafe_allow_html=True)
+
+
 # ---------- page ----------
 left_img = load_image(("images/study-desk.jpg", "images/study-desk.jpeg", "images/study-desk.png"))
 right_img = load_image(("images/student-laptop.jpg", "images/student-laptop.jpeg", "images/student-laptop.png"))
@@ -786,8 +1221,66 @@ with _tg:
 st.markdown(GALLERY.replace("__LEFT__", left_img or LEFT_ART).replace("__RIGHT__", right_img or RIGHT_ART),
             unsafe_allow_html=True)
 
+# ---------- required account sign-in ----------
+@st.dialog("👋 Welcome to Student Performance Predictor")
+def login_dialog():
+    st.markdown(
+        '<p style="text-align:center;color:#46597d;font-size:14px">'
+        'Sign in to continue, or create your account with a name and a 4–8 digit PIN.</p>',
+        unsafe_allow_html=True
+    )
+    st.text_input(
+        "Your name",
+        value=st.query_params.get("name", ""),
+        placeholder="Enter your name",
+        max_chars=30,
+        key="acc_name"
+    )
+    st.text_input(
+        "PIN (4 to 8 digits)",
+        type="password",
+        placeholder="Enter your PIN",
+        max_chars=8,
+        key="acc_pin"
+    )
+    if st.button(
+        "Sign in / Create account",
+        icon=":material/login:",
+        key="btn_login",
+        use_container_width=True
+    ):
+        # Give immediate feedback while the PIN is checked and account data is loaded.
+        with st.spinner("Checking your account…"):
+            do_login()
+        if st.session_state.get("user"):
+            st.rerun()
+    show_msg("a_msg")
+    st.caption("Your study targets, marks, subjects and progress are saved privately in your account.")
+
+# The dashboard is available only after successful sign-in.
+if not st.session_state.get("user"):
+    login_dialog()
+    st.stop()
+
+# Compact signed-in status instead of a full-width account panel.
+with st.container(key="account_status"):
+    acc_left, acc_right = st.columns([4, 1], vertical_alignment="center")
+    with acc_left:
+        st.markdown(
+            f'<div class="acct-hi">👋 Signed in as '
+            f'<b>{_html.escape(st.session_state.get("user_name", ""))}</b><br>'
+            '<small>Your study progress is being saved privately.</small></div>',
+            unsafe_allow_html=True
+        )
+    with acc_right:
+        st.button("Log out", icon=":material/logout:", on_click=do_logout,
+                  key="btn_logout", use_container_width=True)
+
 _prog = load_progress()
 _today = today_date()
+
+# ---------- daily motivation ----------
+rotating_quote()
 
 # ---------- study target ----------
 st.markdown('<div class="sec-title">🎯 Set Target &amp; Log Today’s Study</div>', unsafe_allow_html=True)
@@ -932,28 +1425,6 @@ with middle:
             if h > 10:
                 st.markdown('<div class="hint">The model learned from 1–9 hours of data, so higher values are only rough estimates.</div>',
                             unsafe_allow_html=True)
-
-QUOTE_SECONDS = 8   # a new quote appears automatically every 8 seconds
-
-
-@st.fragment(run_every=QUOTE_SECONDS)
-def rotating_quote():
-    res_now = st.session_state.get("res")
-    if res_now:
-        m = predict(res_now[0], res_now[1], res_now[2])
-        tier = "low" if m < 50 else "mid" if m < 75 else "high"
-    else:
-        tier = "general"
-    pool = QUOTES[tier]
-    quote = pool[int(time.time() // QUOTE_SECONDS) % len(pool)]
-    st.markdown(f'<div class="qbox"><div class="qtitle">💪 Daily motivation</div><div class="qtext">“{quote}”</div></div>',
-                unsafe_allow_html=True)
-
-
-_, qmid, _ = st.columns([1, 1.3, 1])
-with qmid:
-    rotating_quote()
-
 res = st.session_state.get("res")
 if res:
     h, hl, u = res
@@ -968,14 +1439,17 @@ if res:
 # ---------- performance analytics and study history ----------
 _prog = load_progress()
 st.markdown('<div class="sec-title">📈 Performance Analytics &amp; Study History</div>', unsafe_allow_html=True)
-_, rmid, _ = st.columns([1, 2, 1])
-with rmid:
-    _mode = st.radio("Calendar shows", ["Topics completed", "Study hours"], horizontal=True, key="heat_mode")
 _chart = perf_chart(_prog, _today)
 _perf = '<div class="panel wide"><h3>📈 Study hours &amp; mock test performance</h3>' + (
     '<div class="perfgrid"><div>' + _chart + '</div>' + perf_stats_html(_prog, _today) + '</div>' if _chart else
     '<div class="tmsg">Log your study hours and save mock test marks to see this graph.</div>') + '</div>'
-st.markdown('<div class="charts">' + _perf + heatmap_html(_prog, _today, "hours" if _mode == "Study hours" else "topics")
+st.markdown('<div class="charts">' + _perf + '</div>', unsafe_allow_html=True)
+
+# the calendar selector sits right above the calendar
+with st.container(key="calpick"):
+    _mode = st.radio("Calendar shows", ["Topics completed", "Study hours"], horizontal=True, key="heat_mode")
+st.markdown('<div class="charts" style="margin-top:6px">' + heatmap_html(_prog, _today, "hours" if _mode == "Study hours" else "topics")
             + progress_html(_prog, st.session_state.get("res"), _today) + recent_html(_prog) + '</div>', unsafe_allow_html=True)
+
 
 st.markdown('<div class="foot">🎓 Study Smart | Work Hard | Achieve More</div>', unsafe_allow_html=True)
