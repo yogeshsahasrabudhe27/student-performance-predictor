@@ -48,6 +48,7 @@ DARK_CSS = """
 [class*="st-key-card"] [data-testid="stNumberInput"], [class*="st-key-card"] [data-testid="stTextInput"], [class*="st-key-card"] [data-testid="stDateInput"] {background:#101827 !important; border-color:#334155 !important;}
 [class*="st-key-card"] input {color:#F8FAFC !important;}
 [class*="st-key-card"] [data-testid="stButton"] button {background:#60A5FA !important;}
+[class*="st-key-card"] [data-testid="stButton"] button:hover {background:#93C5FD !important; box-shadow:0 8px 18px rgba(96,165,250,.35);}
 [class*="st-key-card"] [data-testid="stButton"] button p, [class*="st-key-card"] [data-testid="stButton"] button span {color:#101827 !important;}
 .cchip, .chip {background:#1E293B !important; color:#F8FAFC !important; border-color:#334155 !important;}
 .bar, .dash .bar {background:#334155 !important;} .bar > span, .dash .bar > span {background:#60A5FA !important;}
@@ -57,6 +58,9 @@ DARK_CSS = """
 [class*="st-key-tile_sub_"] [data-testid="stHorizontalBlock"] {border-color:#334155 !important;}
 .heatpanel, .blob, .foot {background:#1E293B !important;}
 .cell {background:#334155;} .cell.fut {background:transparent;}
+.stat, .stat.mock {background:#101827 !important; border-color:#334155 !important;} .stat b {color:#F8FAFC !important;} .stat small {color:#94A3B8 !important;}
+.actscroll {scrollbar-color:#475569 #1E293B;} .actscroll::-webkit-scrollbar-track {background:#1E293B;} .actscroll::-webkit-scrollbar-thumb {background:#475569;}
+
 </style>
 """
 
@@ -99,7 +103,9 @@ CSS = """
 [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] {display:none !important;}
 [class*="st-key-card"] [data-testid="stButton"] {width:100% !important; margin-top:12px;}
 [class*="st-key-card"] [data-testid="stButton"] button {width:100%; height:46px; border-radius:999px !important; background:#1447a8 !important; border:0 !important; color:#fff !important; font-weight:600;}
-[class*="st-key-card"] [data-testid="stButton"] button:hover {background:#0f3a8f !important;}
+[class*="st-key-card"] [data-testid="stButton"] button {transition:background .2s ease, transform .2s ease, box-shadow .2s ease;}
+[class*="st-key-card"] [data-testid="stButton"] button:hover {background:#0f3a8f !important; transform:translateY(-2px); box-shadow:0 8px 18px rgba(20,71,168,.35);}
+[class*="st-key-card"] [data-testid="stButton"] button:active {transform:translateY(0); box-shadow:0 3px 8px rgba(20,71,168,.3);}
 [class*="st-key-card"] [data-testid="stButton"] button p, [class*="st-key-card"] [data-testid="stButton"] button span {color:#fff !important; font-size:15px;}
 .result {margin-top:14px; padding:12px; border-radius:12px; background:#d9eafd; color:#1447a8; font-weight:600; font-size:18px; text-align:center;}
 .tags {margin-top:8px; font-size:13px; color:#34466b; text-align:center;}
@@ -131,7 +137,7 @@ CSS = """
 .months span {white-space:nowrap;}
 .heat {display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,14px); grid-auto-columns:14px; gap:4px;}
 .cell {display:block; width:14px; height:14px; border-radius:3px; background:#2b4676;}
-.cell.l1 {background:#3fae5a;} .cell.l2 {background:#4cd06b;} .cell.l3 {background:#6ee887;} .cell.l4 {background:#b6ffc6;}
+.cell.lv1 {background:#3fae5a;} .cell.lv2 {background:#4cd06b;} .cell.lv3 {background:#6ee887;} .cell.lv4 {background:#b6ffc6;}
 .cell.fut {background:transparent;}
 .legend {display:flex; justify-content:flex-end; align-items:center; gap:4px; margin-top:10px; font-size:11px; color:#9fb6dd;}
 .st-key-card_exam, [class*="st-key-card_target"] {width:min(1100px,92%) !important; margin:20px auto 0 !important;}
@@ -143,18 +149,18 @@ CSS = """
 .subj-head {display:flex; justify-content:space-between; font-weight:700; color:#14305e; font-size:16px;}
 [class*="st-key-card"] [class*="st-key-rm_"] [data-testid="stButton"] {width:auto !important; margin-top:0 !important;}
 [class*="st-key-card"] [class*="st-key-rm_"] [data-testid="stButton"] button {width:36px; height:36px; min-height:36px; padding:0; background:#fff !important; border:1px solid #f0b4b4 !important;}
-[class*="st-key-card"] [class*="st-key-rm_"] [data-testid="stButton"] button:hover {background:#fde8e8 !important;}
+[class*="st-key-card"] [class*="st-key-rm_"] [data-testid="stButton"] button:hover {background:#fde8e8 !important; transform:none; box-shadow:none;}
 [class*="st-key-card"] [class*="st-key-rm_"] [data-testid="stButton"] button p, [class*="st-key-card"] [class*="st-key-rm_"] [data-testid="stButton"] button span {color:#d62b2b !important;}
 .divider {border:0; border-top:1px solid #d3e3f7; margin:22px 0 14px;}
 [class*="st-key-card_target"] {background:linear-gradient(135deg,#eaf6ff,#e3eefb) !important; border:1px solid #bae6fd !important;}
-[class*="st-key-card_target"] .card-title {color:#075985;}
-[class*="st-key-tile_"] {background:#fff; border:1px solid #cfe8f7; border-radius:16px; padding:16px 16px 12px; box-shadow:0 4px 14px rgba(2,132,199,.08);}
-[class*="st-key-card_target"] [data-testid="stButton"] button {background:#0284c7 !important;}
-[class*="st-key-card_target"] [data-testid="stButton"] button:hover {background:#0369a1 !important;}
+[class*="st-key-card_target"] .card-title {color:#14305e;}
+[class*="st-key-tile_"] {background:#fff; border:1px solid #cfe8f7; border-radius:16px; padding:16px 16px 22px; box-shadow:0 4px 14px rgba(2,132,199,.08);}
+[class*="st-key-card_target"] [data-testid="stButton"] button {background:#1447a8 !important;}
+[class*="st-key-card_target"] [data-testid="stButton"] button:hover {background:#0f3a8f !important;}
 [class*="st-key-card_target"] [data-testid="stNumberInput"], [class*="st-key-card_target"] [data-testid="stTextInput"] {border-color:#bae6fd !important; background:#f4faff !important;}
 [class*="st-key-card_target"] .bar {background:#e0f2fe;}
 [class*="st-key-card_target"] .bar > span {background:linear-gradient(90deg,#0ea5e9,#34d399);}
-[class*="st-key-card_target"] .subj-head {color:#075985;}
+[class*="st-key-card_target"] .subj-head {color:#14305e;}
 .welcome {text-align:center; margin-top:16px; font-size:22px; font-weight:700; color:#14305e;}
 .dash {display:grid; grid-template-columns:1fr 1.3fr 1fr; gap:22px; width:min(1160px,92%); margin:20px auto 0;}
 .ringbox {display:flex; align-items:center; gap:14px;}
@@ -182,7 +188,24 @@ CSS = """
 .panel {transition:transform .25s ease, box-shadow .25s ease;}
 .panel:hover {transform:translateY(-3px);}
 .sec-title::after {content:""; display:block; width:64px; height:4px; border-radius:4px; margin:8px auto 0; background:linear-gradient(90deg,#4aa8f0,#fb923c);}
-.foot {margin-top:60px; background:#14305e; color:#fff; text-align:center; font-size:15px; padding:42px 16px 26px; border-radius:50% 50% 0 0 / 46px 46px 0 0;}
+.legend {display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:12px; font-size:11px; line-height:14px;}
+.legend .lg {display:inline-flex; align-items:center; gap:4px;}
+.legend .cell {flex:0 0 14px; width:14px; height:14px; margin:0;}
+.perfgrid {display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:18px; align-items:stretch;}
+.statgrid {display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:1fr; gap:10px;}
+.stat {display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:2px; background:#eaf3ff; border:1px solid #d3e3f7; border-radius:16px; padding:10px 6px;}
+.stat.mock {background:#e4efff;}
+.stat .si {font-size:18px; line-height:1;}
+.stat b {font-size:20px; color:#14305e; line-height:1.15;}
+.stat small {font-size:11px; color:#46597d; line-height:1.2;}
+.actscroll {max-height:340px; overflow-y:auto; padding-right:8px; scrollbar-width:thin; scrollbar-color:#a9c4ea #eaf3ff;}
+.actscroll::-webkit-scrollbar {width:8px;}
+.actscroll::-webkit-scrollbar-track {background:#eaf3ff; border-radius:8px;}
+.actscroll::-webkit-scrollbar-thumb {background:#a9c4ea; border-radius:8px;}
+.actscroll::-webkit-scrollbar-thumb:hover {background:#7fb0e8;}
+@media (max-width:900px) {.perfgrid {grid-template-columns:1fr;}}
+.foot {margin-top:60px; background:linear-gradient(135deg,#1f4a8c,#2d62b0); color:#fff; text-align:center; font-size:22px; font-weight:600; letter-spacing:.4px; padding:50px 16px 32px; border-radius:50% 50% 0 0 / 46px 46px 0 0;}
+@media (max-width:720px) {.foot {font-size:16px;}}
 @media (max-width:720px) {
   .gallery, .charts {grid-template-columns:1fr;}
   .blob {width:170px; height:120px; padding:14px 10px 0 40px;}
@@ -584,8 +607,8 @@ def heatmap_html(p, today, mode="topics", weeks=26):
                 total += c
                 lvl = 0 if c == 0 else 1 if c == 1 else 2 if c == 2 else 3 if c <= 4 else 4
                 tip = f'{d:%a %d %b %Y}: {c} topic{"s" if c != 1 else ""} completed'
-            cells.append(f'<i class="cell l{lvl}" title="{tip}"></i>')
-    legend = "".join(f'<i class="cell l{i}"></i>' for i in range(5))
+            cells.append(f'<i class="cell lv{lvl}" title="{tip}"></i>')
+    legend = "".join(f'<i class="cell lv{i}"></i>' for i in range(5))
     head = (f"{total:g} hours studied" if mode == "hours" else f"{total:g} topics completed") + f" in the last {weeks} weeks"
     return ('<div class="heatpanel">'
             f'<div class="heathead">{head}</div>'
@@ -593,7 +616,7 @@ def heatmap_html(p, today, mode="topics", weeks=26):
             '<div class="dlabels"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span></div>'
             '<div><div class="months">' + "".join(months) + '</div><div class="heat">' + "".join(cells) + '</div></div>'
             '</div></div>'
-            f'<div class="legend">Less {legend} More</div></div>')
+            f'<div class="legend"><span>Less</span><span class="lg">{legend}</span><span>More</span></div></div>')
 
 
 PALETTE = ["#2b6be6", "#ff9f43", "#0d9488", "#16a34a", "#e11d48", "#0891b2"]
@@ -675,7 +698,7 @@ def perf_chart(p, today, days=7):
     dark = CHART_TXT == "#F8FAFC"
     BAR, TODAY, MOCK, LINE = (("#4F8FD8", "#60A5FA", "#93C5FD", "#F8FAFC") if dark
                               else ("#7fb0e8", "#1f5fd1", "#a9ccf5", "#14305e"))
-    fig, (ax, axm) = plt.subplots(1, 2, figsize=(10, 3.7), gridspec_kw={"width_ratios": [1.6, 1], "wspace": 0.22})
+    fig, (ax, axm) = plt.subplots(1, 2, figsize=(8.6, 3.9), gridspec_kw={"width_ratios": [1.55, 1], "wspace": 0.26})
     for a_ in (ax, axm):
         a_.grid(axis="y", color=CHART_TXT, alpha=.12)
         a_.set_axisbelow(True)
@@ -716,14 +739,34 @@ def perf_chart(p, today, days=7):
     return fig_to_img(fig)
 
 
-def recent_html(p, n=8):
+def perf_stats_html(p, today, days=7):
+    xs = [today - timedelta(days=days - 1 - i) for i in range(days)]
+    hrs = [float(p.get("log", {}).get(d.isoformat(), 0) or 0) for d in xs]
+    th = p.get("target_hours")
+    vals = [float(v) for _, v in sorted(p.get("mocks", {}).items())]
+    bi = max(range(days), key=lambda i: hrs[i])
+    boxes = [
+        ("🕒", f"{sum(hrs):g} h", "Total hours", ""),
+        ("📆", f"{sum(hrs) / days:.1f} h", "Daily average", ""),
+        ("🏆", f"{hrs[bi]:g} h" if hrs[bi] else "-", f"Best day {xs[bi]:%d %b}" if hrs[bi] else "Best day", ""),
+        ("🎯", f"{sum(1 for h in hrs if th and h >= th)}/{days}" if th else "-", "Goal days", ""),
+        ("🧪", f"{vals[-1]:g}%" if vals else "-", "Latest mock", " mock"),
+        ("📊", f"{sum(vals) / len(vals):.0f}%" if vals else "-", "Average mock", " mock"),
+        ("🥇", f"{max(vals):g}%" if vals else "-", "Best mock", " mock"),
+        ("📝", f"{len(vals)}", "Tests taken", " mock"),
+    ]
+    return '<div class="statgrid">' + "".join(
+        f'<div class="stat{c}"><span class="si">{i}</span><b>{v}</b><small>{l}</small></div>' for i, v, l, c in boxes) + '</div>'
+
+
+def recent_html(p):
     ev = [(t["done"], f"{sub} — Completed {t['name']}") for sub, ts in p["subjects"].items() for t in ts if t.get("done")]
     ev += [(d, f"Studied {float(h):g} hours") for d, h in p.get("log", {}).items()]
     ev += [(d, f"Mock test — scored {float(m):g}%") for d, m in p.get("mocks", {}).items()]
     ev.sort(key=lambda e: e[0], reverse=True)
     rows = "".join(f'<div class="actrow"><span>{_html.escape(txt)}</span><span class="actdate">{date.fromisoformat(d):%d %b %Y}</span></div>'
-                   for d, txt in ev[:n]) or '<div class="tmsg">Nothing yet. Log your study, tick a topic or save a mock test.</div>'
-    return '<div class="panel"><h3>🕘 Recent activity</h3>' + rows + '</div>'
+                   for d, txt in ev) or '<div class="tmsg">Nothing yet. Log your study, tick a topic or save a mock test.</div>'
+    return f'<div class="panel"><h3>🕘 Recent activity ({len(ev)})</h3><div class="actscroll">{rows}</div></div>'
 
 
 # ---------- page ----------
@@ -747,7 +790,7 @@ _prog = load_progress()
 _today = today_date()
 
 # ---------- study target ----------
-st.markdown('<div class="sec-title" style="color:#0369a1">🎯 Set Target &amp; Log Today’s Study</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-title">🎯 Set Target &amp; Log Today’s Study</div>', unsafe_allow_html=True)
 with st.container(key="card_target"):
     c1, c2, c3 = st.columns(3, gap="medium")
     with c1:
@@ -782,7 +825,7 @@ with st.container(key="card_target"):
 st.markdown('<div class="sec-title">📊 Daily Progress &amp; Study Streak</div>', unsafe_allow_html=True)
 st.markdown(daily_html(_prog, _today), unsafe_allow_html=True)
 
-st.markdown('<div class="sec-title" style="color:#0369a1">📚 Subjects &amp; Topics</div>', unsafe_allow_html=True)
+st.markdown('<div class="sec-title">📚 Subjects &amp; Topics</div>', unsafe_allow_html=True)
 with st.container(key="card_target_topics"):
     st.markdown(subject_rings_html(_prog), unsafe_allow_html=True)
     st.markdown('<div class="card-title" style="font-size:19px">➕ Add a subject and topic</div>', unsafe_allow_html=True)
@@ -930,7 +973,8 @@ with rmid:
     _mode = st.radio("Calendar shows", ["Topics completed", "Study hours"], horizontal=True, key="heat_mode")
 _chart = perf_chart(_prog, _today)
 _perf = '<div class="panel wide"><h3>📈 Study hours &amp; mock test performance</h3>' + (
-    _chart or '<div class="tmsg">Log your study hours and save mock test marks to see this graph.</div>') + '</div>'
+    '<div class="perfgrid"><div>' + _chart + '</div>' + perf_stats_html(_prog, _today) + '</div>' if _chart else
+    '<div class="tmsg">Log your study hours and save mock test marks to see this graph.</div>') + '</div>'
 st.markdown('<div class="charts">' + _perf + heatmap_html(_prog, _today, "hours" if _mode == "Study hours" else "topics")
             + progress_html(_prog, st.session_state.get("res"), _today) + recent_html(_prog) + '</div>', unsafe_allow_html=True)
 
