@@ -13,7 +13,7 @@ TITLE_LINE1 = "Student Performance"   # small dark line
 TITLE_LINE2 = "Predictor"             # big blue italic line
 PREDICT_TITLE = "📊 Academic Performance Insights"   # heading above the prediction card
 
-st.set_page_config(page_title=f"{TITLE_LINE1} {TITLE_LINE2}", page_icon="🎓", layout="wide")
+st.set_page_config(page_title=f"{TITLE_LINE1} {TITLE_LINE2}", page_icon="🎓", layout="wide", initial_sidebar_state="expanded")
 
 # Change this to your own time zone if needed, e.g. "Asia/Kolkata", "America/New_York"
 TIMEZONE = "Asia/Kolkata"
@@ -40,7 +40,7 @@ DARK_CSS = """
 <style>
 .stApp {background:#101827 !important;}
 .stApp p, .stApp label, .stApp li {color:#F8FAFC;}
-.l1, .l2, .welcome, .sec-title, .card-title, .panel h3, .ex-sub, .subj-head, .lbl, .card-sub, .ptext, .tmsg, .tagline, .rname, .actrow, .subj-name, .heathead {color:#F8FAFC !important;}
+.l1, .welcome, .sec-title, .card-title, .panel h3, .ex-sub, .subj-head, .lbl, .card-sub, .ptext, .tmsg, .tagline, .rname, .actrow, .subj-name, .heathead {color:#F8FAFC !important;}
 .ex-date, .actdate, .legend, .subj-count, .dlabels, .months {color:#94A3B8 !important;}
 .l2 {color:#60A5FA !important;} .tagline i {background:#60A5FA !important;}
 [class*="st-key-card"], .panel, .exam, [class*="st-key-tile_"] {background:#1E293B !important; border-color:#334155 !important;}
@@ -59,20 +59,46 @@ DARK_CSS = """
 [class*="st-key-tile_sub_"] [data-testid="stHorizontalBlock"] {border-color:#334155 !important;}
 .heatpanel, .blob, .foot {background:#1E293B !important;}
 .cell {background:#334155;} .cell.fut {background:transparent;}
+section[data-testid="stSidebar"] [data-testid="stToggle"] p {color:#F8FAFC !important;}
+div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {color:#F8FAFC !important;}
+[data-testid="stForm"] [data-testid="stTextInput"] {background:#101827 !important; border-color:#334155 !important;}
+[data-testid="stForm"] [data-testid="stTextInput"] input {color:#F8FAFC !important;}
+[data-testid="stFormSubmitButton"] button {background:#60A5FA !important;}
+[data-testid="stFormSubmitButton"] button:hover {background:#93C5FD !important; box-shadow:0 8px 18px rgba(96,165,250,.35);}
+[data-testid="stFormSubmitButton"] button p, [data-testid="stFormSubmitButton"] button span {color:#101827 !important;}
+section[data-testid="stSidebar"] {background:#1E293B !important; border-right-color:#334155 !important;}
+.sb-brand {color:#F8FAFC !important; border-color:#334155 !important;} .sb-brand svg {stroke:#60A5FA !important;} .sb-sep {background:#334155 !important;}
+[class*="st-key-navoff_"] button {color:#F8FAFC !important;}
+[class*="st-key-navoff_"] button:hover {background:#60A5FA !important; color:#101827 !important;}
+[class*="st-key-navon_"] button {background:#60A5FA !important; color:#101827 !important; box-shadow:0 8px 18px rgba(96,165,250,.3) !important;}
+div[role="dialog"] [data-testid="stTextInput"] {background:#101827 !important; border-color:#334155 !important;} div[role="dialog"] [data-testid="stTextInput"] input {color:#F8FAFC !important;}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button {background:#60A5FA !important;}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button:hover {background:#93C5FD !important; box-shadow:0 8px 18px rgba(96,165,250,.35);}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button p, div[role="dialog"] [data-testid="stFormSubmitButton"] button span {color:#101827 !important;}
+.topnav {background:rgba(30,41,59,.92) !important; border-color:#334155 !important;} .topnav .brand {color:#F8FAFC !important; border-color:#334155 !important;} .topnav a {color:#F8FAFC !important;} .topnav a:hover {background:#60A5FA !important; color:#101827 !important;}
+.topnav .ni {background:#101827 !important; color:#60A5FA !important;} .topnav .brand svg {color:#60A5FA !important;}
+.topnav a:hover .ni, .stApp:not(:has(:target)) .topnav a[href="#home"] .ni,
+.stApp:has(#home:target) .topnav a[href="#home"] .ni,
+.stApp:has(#sec-target:target) .topnav a[href="#sec-target"] .ni,
+.stApp:has(#sec-subjects:target) .topnav a[href="#sec-subjects"] .ni,
+.stApp:has(#sec-exams:target) .topnav a[href="#sec-exams"] .ni,
+.stApp:has(#sec-predict:target) .topnav a[href="#sec-predict"] .ni,
+.stApp:has(#sec-insights:target) .topnav a[href="#sec-insights"] .ni {background:rgba(16,24,39,.18) !important; color:#101827 !important;}
+.stApp:not(:has(:target)) .topnav a[href="#home"],
+.stApp:has(#home:target) .topnav a[href="#home"],
+.stApp:has(#sec-target:target) .topnav a[href="#sec-target"],
+.stApp:has(#sec-subjects:target) .topnav a[href="#sec-subjects"],
+.stApp:has(#sec-exams:target) .topnav a[href="#sec-exams"],
+.stApp:has(#sec-predict:target) .topnav a[href="#sec-predict"],
+.stApp:has(#sec-insights:target) .topnav a[href="#sec-insights"] {background:#60A5FA !important; color:#101827 !important; box-shadow:0 6px 14px rgba(96,165,250,.3) !important;}
+.srow2 {background:#101827 !important; border-color:#334155 !important;} .sbadge {background:#1E293B !important;} .slabel {color:#94A3B8 !important;} .srow2 b {color:#F8FAFC !important;}
+[class*="st-key-acctbar"] {background:#1E293B !important; border-color:#334155 !important;}
+[class*="st-key-pillbtn"] [data-testid="stButton"] button {background:#60A5FA !important;}
+[class*="st-key-pillbtn"] [data-testid="stButton"] button:hover {background:#93C5FD !important; box-shadow:0 8px 18px rgba(96,165,250,.35);}
+[class*="st-key-pillbtn"] [data-testid="stButton"] button p, [class*="st-key-pillbtn"] [data-testid="stButton"] button span {color:#101827 !important;}
+div[role="dialog"] {background:#1E293B !important;} div[role="dialog"] h2, div[role="dialog"] p, div[role="dialog"] label {color:#F8FAFC !important;}
 .acct-hi {color:#F8FAFC !important;} .acct-hi small, .acct-note {color:#94A3B8 !important;}
-/* Keep the graph-side performance summary cards bright and readable in dark mode. */
-.stat, .stat.mock {
-  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%) !important;
-  border-color:var(--line) !important;
-  box-shadow:0 7px 18px rgba(20,48,94,.09) !important;
-}
-.stat .si {background:linear-gradient(145deg,#fff,var(--soft)) !important; color:#14305e !important; border-color:var(--line) !important;}
-.stat b {color:#14305e !important;}
-.stat small {color:#61738f !important;}
-.stat:hover {
-  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%) !important;
-  box-shadow:0 14px 26px rgba(20,48,94,.16) !important;
-}
+.stat, .stat.mock {background:#101827 !important; border-color:#334155 !important;} .stat b {color:#F8FAFC !important;} .stat small {color:#94A3B8 !important;}
 .actscroll {scrollbar-color:#475569 #1E293B;} .actscroll::-webkit-scrollbar-track {background:#1E293B;} .actscroll::-webkit-scrollbar-thumb {background:#475569;}
 
 </style>
@@ -86,15 +112,15 @@ CSS = """
 .stApp, .stApp input, .stApp button {font-family:'Poppins',sans-serif;}
 .block-container {padding:0 !important; max-width:100% !important;}
 .script {font-family:'Caveat','Segoe Script',cursive; font-weight:600;}
-.hdr {position:relative; text-align:center; padding:26px 16px 0;}
-.plane {position:absolute; top:28px; left:30px;}
+.hdr {position:relative; text-align:center; padding:24px 16px 0;}
+.plane {position:absolute; top:90px; left:30px;}
 .blob {position:absolute; top:0; right:0; width:270px; height:180px; background:#14305e; border-bottom-left-radius:100% 100%; color:#fff; text-align:center; padding:28px 18px 0 70px;}
 .blob .script {font-size:25px; line-height:1.15; display:block; transform:rotate(-6deg);}
 .blob .line {display:block; height:3px; width:90px; background:#5aa2ff; border-radius:3px; margin:6px auto 4px;}
 .title-row {display:inline-flex; align-items:center; gap:12px;}
 .ttl {text-align:left; line-height:1;}
-.l1 {display:block; font-size:46px; font-weight:700; color:#061735 !important;}
-.l2 {display:block; font-size:66px; font-weight:700; font-style:italic; color:#09264F !important; margin-top:-4px;}
+.l1 {display:block; font-size:46px; font-weight:700; color:#14305e;}
+.l2 {display:block; font-size:66px; font-weight:700; font-style:italic; color:#1f5fd1; margin-top:-4px;}
 .tagline {margin-top:12px; font-size:18px; color:#1c2b4a; display:flex; align-items:center; justify-content:center; gap:14px;}
 .tagline i {width:28px; height:2px; background:#14305e; display:block;}
 .gallery, .charts {display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1160px,92%); margin:26px auto 0;}
@@ -128,10 +154,9 @@ CSS = """
 .hint {margin-top:8px; font-size:12px; color:#4a5c80; text-align:center;}
 .err {margin-top:12px; font-size:13px; color:#d62b2b; text-align:center;}
 .err b {display:inline-block; width:16px; height:16px; line-height:16px; border-radius:50%; background:#d62b2b; color:#fff; font-size:11px; margin-right:6px;}
-.qbox {width:min(1160px,92%); margin:20px auto 22px; padding:19px 26px; border:1px solid rgba(255,255,255,.18); border-radius:20px; text-align:center; color:#fff; background:linear-gradient(115deg,#071B3D 0%,#123F78 48%,#2458b8 100%); box-shadow:0 12px 28px rgba(7,27,61,.20); transition:transform .22s ease, box-shadow .22s ease;}
+.qbox {margin-top:26px; padding:20px 26px; border-radius:18px; text-align:center; color:#fff; background:linear-gradient(135deg,#14305e,#1f5fd1); box-shadow:0 10px 30px rgba(20,48,94,.25);}
 .qtitle {font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#9fd0ff; margin-bottom:6px;}
-.qtext {font-size:21px; font-weight:600; line-height:1.4; color:#fff !important;}
-.qbox:hover {transform:translateY(-2px); box-shadow:0 16px 32px rgba(7,27,61,.26);}
+.qtext {font-size:21px; font-weight:500; line-height:1.4;}
 .st-key-quote [data-testid="stButton"] {display:flex; justify-content:center; margin-top:10px;}
 .st-key-quote [data-testid="stButton"] button {border-radius:999px !important; border:1.5px solid #1447a8 !important; background:#fff !important; color:#1447a8 !important; font-weight:600;}
 .st-key-quote [data-testid="stButton"] button p {color:#1447a8 !important;}
@@ -207,137 +232,12 @@ CSS = """
 .legend .lg {display:inline-flex; align-items:center; gap:4px;}
 .legend .cell {flex:0 0 14px; width:14px; height:14px; margin:0;}
 .perfgrid {display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:18px; align-items:stretch;}
-.statgrid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  grid-auto-rows:minmax(84px,auto);
-  gap:12px;
-}
-.stat {
-  --accent:#3478d4;
-  --accent2:#75b2ff;
-  --soft:#e5efff;
-  --pale:#f4f8ff;
-  --line:#dce8f8;
-  position:relative;
-  isolation:isolate;
-  overflow:hidden;
-  display:grid;
-  grid-template-columns:42px minmax(0,1fr);
-  grid-template-rows:auto auto;
-  align-content:center;
-  align-items:center;
-  column-gap:10px;
-  row-gap:4px;
-  min-width:0;
-  min-height:84px;
-  padding:13px 12px 12px;
-  text-align:left;
-  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%);
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:0 7px 18px rgba(20,48,94,.08);
-  transition:transform .24s ease, box-shadow .24s ease, border-color .24s ease, filter .24s ease;
-}
-/* Fine gradient rail and a soft decorative glow make each metric feel distinct. */
-.stat::before {
-  content:"";
-  position:absolute;
-  z-index:0;
-  top:0;
-  left:15px;
-  right:15px;
-  height:4px;
-  border-radius:0 0 8px 8px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  opacity:.95;
-  transition:left .24s ease,right .24s ease,height .24s ease;
-}
-.stat::after {
-  content:"";
-  position:absolute;
-  z-index:-1;
-  width:84px;
-  height:84px;
-  right:-42px;
-  top:-42px;
-  border-radius:50%;
-  background:var(--soft);
-  opacity:.58;
-  transition:transform .28s ease, opacity .28s ease;
-}
-.stat:nth-child(1) {--accent:#3478d4; --accent2:#75b2ff; --soft:#e5efff; --pale:#f3f8ff; --line:#dce9fb;}
-.stat:nth-child(2) {--accent:#0f9a91; --accent2:#52cbbb; --soft:#def7f2; --pale:#f1fcfa; --line:#d7f0eb;}
-.stat:nth-child(3) {--accent:#d48a20; --accent2:#ffc46b; --soft:#fff1d9; --pale:#fffaf0; --line:#f6e8ce;}
-.stat:nth-child(4) {--accent:#7658c9; --accent2:#a992f4; --soft:#eee8ff; --pale:#f8f5ff; --line:#e8e0fb;}
-.stat:nth-child(5) {--accent:#168bb5; --accent2:#63c5e2; --soft:#e0f5fc; --pale:#f2fbfe; --line:#d8eef6;}
-.stat:nth-child(6) {--accent:#c05291; --accent2:#e68bb9; --soft:#fbe8f2; --pale:#fff6fa; --line:#f3dfeb;}
-.stat:nth-child(7) {--accent:#bd8120; --accent2:#e9b34c; --soft:#fff1d8; --pale:#fffbf1; --line:#f3e8d2;}
-.stat:nth-child(8) {--accent:#64748b; --accent2:#9aabc2; --soft:#e9eef5; --pale:#f6f8fb; --line:#e1e7ef;}
-.stat .si {
-  grid-column:1;
-  grid-row:1 / span 2;
-  position:relative;
-  z-index:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:40px;
-  height:40px;
-  border-radius:14px;
-  background:linear-gradient(145deg,#ffffff,var(--soft));
-  border:1px solid var(--line);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 4px 9px rgba(20,48,94,.06);
-  font-size:18px;
-  line-height:1;
-  transition:transform .24s ease, box-shadow .24s ease;
-}
-.stat b {
-  grid-column:2;
-  grid-row:1;
-  position:relative;
-  z-index:1;
-  display:block;
-  min-width:0;
-  white-space:nowrap;
-  font-size:20px;
-  font-weight:700;
-  color:#14305e;
-  letter-spacing:-.35px;
-  line-height:1.1;
-  transition:color .2s ease, transform .24s ease;
-}
-.stat small {
-  grid-column:2;
-  grid-row:2;
-  position:relative;
-  z-index:1;
-  display:block;
-  min-width:0;
-  font-size:10.5px;
-  color:#61738f;
-  line-height:1.3;
-  overflow-wrap:anywhere;
-}
-.stat:hover {
-  transform:translateY(-5px);
-  border-color:var(--accent);
-  background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%);
-  box-shadow:0 14px 26px rgba(20,48,94,.15);
-  filter:saturate(1.04);
-}
-.stat:hover::before {left:9px; right:9px; height:5px;}
-.stat:hover::after {transform:scale(1.45); opacity:.8;}
-.stat:hover .si {transform:translateY(-2px) rotate(-5deg) scale(1.07); box-shadow:inset 0 1px 0 #fff,0 7px 14px rgba(20,48,94,.12);}
-.stat:hover b {color:var(--accent); transform:translateX(2px);}
-.stat.mock {background:linear-gradient(145deg,#ffffff 0%,var(--pale) 100%);}
-@media (max-width:420px) {
-  .statgrid {gap:9px;}
-  .stat {grid-template-columns:34px minmax(0,1fr); column-gap:8px; padding:12px 9px 11px; min-height:78px; border-radius:15px;}
-  .stat .si {width:33px; height:33px; border-radius:12px; font-size:15px;}
-  .stat b {font-size:18px;}
-  .stat small {font-size:10px;}
-}
+.statgrid {display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:1fr; gap:10px;}
+.stat {display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:2px; background:#eaf3ff; border:1px solid #d3e3f7; border-radius:16px; padding:10px 6px;}
+.stat.mock {background:#e4efff;}
+.stat .si {font-size:18px; line-height:1;}
+.stat b {font-size:20px; color:#14305e; line-height:1.15;}
+.stat small {font-size:11px; color:#46597d; line-height:1.2;}
 .actscroll {max-height:340px; overflow-y:auto; padding-right:8px; scrollbar-width:thin; scrollbar-color:#a9c4ea #eaf3ff;}
 .actscroll::-webkit-scrollbar {width:8px;}
 .actscroll::-webkit-scrollbar-track {background:#eaf3ff; border-radius:8px;}
@@ -348,190 +248,115 @@ CSS = """
 .acct-hi {font-size:16px; color:#14305e; line-height:1.55;}
 .acct-hi small {color:#46597d; font-size:13px;}
 .acct-note {font-size:12px; color:#5b6f95; margin-top:10px; text-align:center;}
-.foot {
-  margin-top:60px;
-  background:linear-gradient(135deg,#071B3D 0%,#0B2E65 58%,#123F78 100%);
-  color:#fff; text-align:center; font-size:22px; font-weight:600;
-  letter-spacing:.4px; padding:50px 16px 32px;
-  border-radius:50% 50% 0 0 / 46px 46px 0 0;
-  box-shadow:0 -10px 28px rgba(7,27,61,.12);
-  transition:filter .25s ease, box-shadow .25s ease;
+.perfgrid {grid-template-columns:minmax(0,1fr) 300px;}
+.statlist {display:flex; flex-direction:column; gap:8px;}
+.srow2 {flex:1; min-height:46px; display:flex; align-items:center; gap:12px; background:#f4f9ff; border:1px solid #d3e3f7; border-radius:14px; padding:6px 14px 6px 10px;}
+.sbadge {flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:17px; background:#dbeafe;}
+.srow2.best .sbadge {background:#fff0cf;} .srow2.goal .sbadge {background:#d8f5e3;} .srow2.mock .sbadge {background:#fde3ec;}
+.slabel {flex:1; font-size:13px; color:#46597d; line-height:1.2;}
+.srow2 b {font-size:17px; color:#14305e; white-space:nowrap;}
+[class*="st-key-acctbar"] {background:rgba(255,255,255,.88); border:1px solid #d3e3f7; border-radius:999px; padding:6px 14px 6px 22px; box-shadow:0 6px 18px rgba(20,48,94,.08); margin-top:10px;}
+[class*="st-key-pillbtn"] [data-testid="stButton"] {display:flex; justify-content:center;}
+[class*="st-key-pillbtn"] [data-testid="stButton"] button {height:38px; min-height:38px; padding:0 18px; border-radius:999px !important; background:#1447a8 !important; border:0 !important; color:#fff !important; font-weight:600; transition:background .2s ease, transform .2s ease, box-shadow .2s ease;}
+[class*="st-key-pillbtn"] [data-testid="stButton"] button:hover {background:#0f3a8f !important; transform:translateY(-2px); box-shadow:0 8px 18px rgba(20,71,168,.35);}
+[class*="st-key-pillbtn"] [data-testid="stButton"] button p, [class*="st-key-pillbtn"] [data-testid="stButton"] button span {color:#fff !important; font-size:14px;}
+[class*="st-key-card_login"] {margin-top:0; background:transparent; border:0; box-shadow:none; padding:0;}
+html, [data-testid="stMain"], section.main {scroll-behavior:smooth;}
+.anchor {display:block; position:relative; top:-96px; visibility:hidden; height:0;}
+.topnav {position:fixed; top:12px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; align-items:center; gap:4px; padding:6px 8px 6px 20px; max-width:96vw; overflow-x:auto; scrollbar-width:none; background:rgba(255,255,255,.88); backdrop-filter:blur(12px); border:1px solid #d3e3f7; border-radius:999px; box-shadow:0 10px 28px rgba(20,48,94,.18);}
+.topnav::-webkit-scrollbar {display:none;}
+.topnav .brand {display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; color:#14305e; white-space:nowrap; margin-right:8px; padding-right:14px; border-right:1px solid #d3e3f7;}
+.topnav a {display:flex; align-items:center; gap:9px; padding:6px 16px 6px 7px; border-radius:999px; color:#14305e !important; font-weight:600; font-size:15px; line-height:1; text-decoration:none !important; white-space:nowrap; transition:background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;}
+.topnav a:hover {background:#1447a8; color:#fff !important; transform:translateY(-1px);}
+.topnav .ni {flex:none; width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:#e8f1ff; color:#1447a8; transition:background .2s ease, color .2s ease;}
+.topnav .ni svg, .topnav .brand svg {width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .25s ease;}
+.topnav .brand svg {width:22px; height:22px; color:#1447a8;}
+.topnav a:hover .ni, .stApp:not(:has(:target)) .topnav a[href="#home"] .ni,
+.stApp:has(#home:target) .topnav a[href="#home"] .ni,
+.stApp:has(#sec-target:target) .topnav a[href="#sec-target"] .ni,
+.stApp:has(#sec-subjects:target) .topnav a[href="#sec-subjects"] .ni,
+.stApp:has(#sec-exams:target) .topnav a[href="#sec-exams"] .ni,
+.stApp:has(#sec-predict:target) .topnav a[href="#sec-predict"] .ni,
+.stApp:has(#sec-insights:target) .topnav a[href="#sec-insights"] .ni {background:rgba(255,255,255,.2); color:#fff;}
+.topnav a:hover .ni svg {transform:scale(1.18) rotate(-8deg);}
+.stApp:not(:has(:target)) .topnav a[href="#home"],
+.stApp:has(#home:target) .topnav a[href="#home"],
+.stApp:has(#sec-target:target) .topnav a[href="#sec-target"],
+.stApp:has(#sec-subjects:target) .topnav a[href="#sec-subjects"],
+.stApp:has(#sec-exams:target) .topnav a[href="#sec-exams"],
+.stApp:has(#sec-predict:target) .topnav a[href="#sec-predict"],
+.stApp:has(#sec-insights:target) .topnav a[href="#sec-insights"] {background:linear-gradient(135deg,#14305e,#1f5fd1); color:#fff !important; box-shadow:0 6px 14px rgba(20,71,168,.32);}
+@media (max-width:1000px) {.topnav .brand {display:none;}}
+@media (max-width:720px) {.topnav {padding:6px;} .topnav a {padding:6px;} .topnav .nt {display:none;}}
+div[role="dialog"] [data-testid="stTextInput"] {background:#f4f9ff; border:1.5px solid #a9c4ea; border-radius:999px; overflow:hidden; padding:0 8px; min-height:46px;}
+div[role="dialog"] [data-testid="stTextInput"]:focus-within {border-color:#14305e; box-shadow:0 0 0 3px rgba(20,48,94,.15);}
+div[role="dialog"] [data-testid="stTextInput"] * {background:transparent !important; border:none !important; box-shadow:none !important;}
+div[role="dialog"] [data-testid="stTextInput"] input {color:#1c2b4a !important; padding-left:14px !important; font-size:14px;}
+div[role="dialog"] [data-testid="stFormSubmitButton"] {width:100%; margin-top:6px;}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button {width:100%; height:46px; border-radius:999px !important; background:#14305e !important; border:0 !important; color:#fff !important; font-weight:600; transition:background .2s ease, transform .2s ease, box-shadow .2s ease;}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button:hover {background:#1f4a8c !important; transform:translateY(-2px); box-shadow:0 8px 18px rgba(20,48,94,.35);}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button:active {transform:translateY(0); box-shadow:0 3px 8px rgba(20,48,94,.3);}
+div[role="dialog"] [data-testid="stFormSubmitButton"] button p, div[role="dialog"] [data-testid="stFormSubmitButton"] button span {color:#fff !important; font-size:15px;}
+section[data-testid="stSidebar"] {background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(228,239,255,.94)) !important; border-right:1px solid #d3e3f7; box-shadow:6px 0 30px rgba(20,48,94,.08);}
+section[data-testid="stSidebar"][aria-expanded="true"] {min-width:260px !important; max-width:260px !important; width:260px !important;}
+.sb-brand {display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; color:#14305e; padding:4px 6px 16px; margin-bottom:12px; border-bottom:1px solid #d3e3f7;}
+.sb-brand svg {width:28px; height:28px; flex:none; fill:none; stroke:#1447a8; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+.sb-sep {height:1px; background:#d3e3f7; margin:18px 0 14px;}
+[class*="st-key-navoff_"] [data-testid="stButton"], [class*="st-key-navon_"] [data-testid="stButton"] {width:100%;}
+[class*="st-key-navoff_"] button, [class*="st-key-navon_"] button {width:100%; height:52px; justify-content:flex-start !important; gap:14px; padding:0 20px !important; border-radius:999px !important; border:0 !important; font-weight:600; transition:background .25s ease, color .25s ease, transform .2s ease, box-shadow .25s ease;}
+[class*="st-key-navoff_"] button {background:transparent !important; color:#14305e !important;}
+[class*="st-key-navoff_"] button:hover {background:#1447a8 !important; color:#fff !important; transform:translateX(5px);}
+[class*="st-key-navon_"] button {background:linear-gradient(135deg,#14305e,#1f5fd1) !important; color:#fff !important; box-shadow:0 8px 18px rgba(20,71,168,.35);}
+[class*="st-key-navoff_"] button p, [class*="st-key-navon_"] button p {color:inherit !important; font-size:16px; margin:0 !important;}
+[class*="st-key-navoff_"] button::before, [class*="st-key-navon_"] button::before {content:""; width:24px; height:24px; flex:none; background-color:currentColor; -webkit-mask:var(--ico) center/contain no-repeat; mask:var(--ico) center/contain no-repeat;}
+[class*="st-key-nav"][class*="_home"] button {--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11l9-8 9 8'/%3E%3Cpath d='M5 10v10h14V10'/%3E%3Cpath d='M10 20v-6h4v6'/%3E%3C/svg%3E");}
+[class*="st-key-nav"][class*="_planner"] button {--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 5c3-1.5 7-1.5 10 1 3-2.5 7-2.5 10-1v14c-3-1.5-7-1.5-10 1-3-2.5-7-2.5-10-1z'/%3E%3Cpath d='M12 6v14'/%3E%3C/svg%3E");}
+[class*="st-key-nav"][class*="_predict"] button {--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 17l6-6 4 4 8-8'/%3E%3Cpath d='M15 7h6v6'/%3E%3C/svg%3E");}
+[class*="st-key-nav"][class*="_insights"] button {--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20V10M10 20V4M16 20v-7M22 20H2'/%3E%3C/svg%3E");}
+@media (min-width:769px) {
+  [data-testid="stSidebarCollapseButton"], [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"], [data-testid="collapsedControl"], [data-testid="stSidebarHeader"] {display:none !important;}
+  section[data-testid="stSidebar"][aria-expanded="false"] {transform:none !important; margin-left:0 !important;}
 }
-.foot:hover {
-  filter:brightness(1.08);
-  box-shadow:0 -14px 34px rgba(7,27,61,.2);
-}
+[class*="st-key-navoff_"] button p, [class*="st-key-navon_"] button p {font-weight:800 !important; letter-spacing:.2px;}
+section[data-testid="stSidebar"] .acct-hi {font-weight:700; color:#14305e;}
+section[data-testid="stSidebar"] [data-testid="stToggle"] p {font-weight:700 !important; color:#14305e !important; font-size:15px !important;}
+div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {color:#14305e !important; font-weight:800 !important;}
+[data-testid="stForm"] .lbl {font-size:15px; font-weight:700; color:#14305e; margin:12px 0 6px 4px;}
+[data-testid="stForm"] [data-testid="stTextInput"] {background:#f4f9ff; border:1.5px solid #a9c4ea; border-radius:999px; overflow:hidden; padding:0 8px; min-height:46px;}
+[data-testid="stForm"] [data-testid="stTextInput"]:focus-within {border-color:#14305e; box-shadow:0 0 0 3px rgba(20,48,94,.15);}
+[data-testid="stForm"] [data-testid="stTextInput"] * {background:transparent !important; border:none !important; box-shadow:none !important;}
+[data-testid="stForm"] [data-testid="stTextInput"] input {color:#14305e !important; font-weight:600 !important; padding-left:14px !important; font-size:15px;}
+[data-testid="stFormSubmitButton"] {width:100%; margin-top:8px;}
+[data-testid="stFormSubmitButton"] button {width:100%; height:48px; border-radius:999px !important; background:#14305e !important; border:0 !important; color:#fff !important; transition:background .2s ease, transform .2s ease, box-shadow .2s ease;}
+[data-testid="stFormSubmitButton"] button:hover {background:#1f4a8c !important; transform:translateY(-2px); box-shadow:0 8px 18px rgba(20,48,94,.35);}
+[data-testid="stFormSubmitButton"] button:active {transform:translateY(0); box-shadow:0 3px 8px rgba(20,48,94,.3);}
+[data-testid="stFormSubmitButton"] button p, [data-testid="stFormSubmitButton"] button span {color:#fff !important; font-weight:700 !important; font-size:16px !important;}
+.foot {margin-top:60px; background:#14305e; color:#fff; text-align:center; font-size:22px; font-weight:600; letter-spacing:.4px; padding:50px 16px 32px; border-radius:50% 50% 0 0 / 46px 46px 0 0;}
 @media (max-width:720px) {.foot {font-size:16px;}}
-.st-key-account_status {width:min(520px,90%) !important; max-width:520px !important; margin:12px auto 8px !important;
-  padding:9px 14px !important; border:1px solid #c9ddf5 !important;
-  border-radius:14px !important; background:rgba(255,255,255,.72) !important;
-  box-shadow:0 4px 12px rgba(20,48,94,.08) !important;}
-.st-key-account_status [data-testid="stHorizontalBlock"] {align-items:center !important; gap:10px !important;}
-.st-key-account_status .acct-hi {font-size:14px !important; line-height:1.35 !important;}
-.st-key-account_status .acct-hi small {font-size:11px !important;}
-.st-key-account_status [data-testid="stButton"] button {min-height:36px !important; padding:4px 12px !important; border-radius:999px !important;}
-/* Login dialog: soft blue glass card with a polished Poppins look */
-[data-testid="stDialog"] [data-testid="stDialogContent"] {
-  border:1px solid rgba(255,255,255,.9) !important;
-  border-radius:24px !important;
-  background:linear-gradient(145deg,#ffffff 0%,#f4f8ff 100%) !important;
-  box-shadow:0 24px 65px rgba(20,48,94,.24) !important;
-  padding:26px 28px 22px !important;
-  animation:loginPop .28s ease-out both;
-}
-[data-testid="stDialog"] h2,
-[data-testid="stDialog"] [data-testid="stDialogHeader"] h2 {
-  color:#071B3D !important;
-  font-family:'Poppins',sans-serif !important;
-  font-weight:700 !important;
-  letter-spacing:-.5px !important;
-}
-[data-testid="stDialog"] p, [data-testid="stDialog"] label,
-[data-testid="stDialog"] [data-testid="stCaptionContainer"] {
-  font-family:'Poppins',sans-serif !important;
-  color:#526789 !important;
-}
-[data-testid="stDialog"] input {
-  background:#f1f6ff !important;
-  border:1.5px solid #c6d9f5 !important;
-  border-radius:13px !important;
-  color:#18345f !important;
-  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease !important;
-}
-[data-testid="stDialog"] input:hover {border-color:#7eabe9 !important; background:#fff !important;}
-[data-testid="stDialog"] input:focus {
-  border-color:#3978d7 !important;
-  box-shadow:0 0 0 4px rgba(57,120,215,.13) !important;
-}
-[data-testid="stDialog"] [data-testid="stButton"] button {
-  min-height:48px !important;
-  border:0 !important;
-  border-radius:14px !important;
-  background:linear-gradient(110deg,#061735 0%,#0B2E65 58%,#123F78 100%) !important;
-  color:#fff !important;
-  font-family:'Poppins',sans-serif !important;
-  font-weight:600 !important;
-  box-shadow:0 7px 18px rgba(7,27,61,.24) !important;
-  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
-}
-[data-testid="stDialog"] [data-testid="stButton"] button:hover {
-  transform:translateY(-2px) !important;
-  filter:brightness(1.07) !important;
-  box-shadow:0 12px 24px rgba(7,27,61,.34) !important;
-}
-[data-testid="stDialog"] [data-testid="stButton"] button:active {transform:translateY(0) scale(.99) !important;}
-[data-testid="stDialog"] [data-testid="stButton"] button p,
-[data-testid="stDialog"] [data-testid="stButton"] button span {color:#fff !important;}
-[data-testid="stDialog"] [data-testid="stCaptionContainer"] {font-size:12px !important; line-height:1.6 !important;}
-[data-testid="stDialog"] [data-testid="stDialogHeader"],
-[data-testid="stDialog"] [data-testid="stDialogHeader"] * {
-  color:#071B3D !important;
-}
-[data-testid="stDialog"] [data-testid="stDialogHeader"] h2 {
-  font-weight:700 !important;
-}
-/* Force the login dialog heading to deep navy (Streamlit versions use different wrappers). */
-[data-testid="stDialog"] [data-testid="stDialogHeader"],
-[data-testid="stDialog"] [data-testid="stDialogHeader"] *,
-[data-testid="stDialog"] [data-testid="stHeadingWithActionElements"],
-[data-testid="stDialog"] [data-testid="stHeadingWithActionElements"] *,
-[data-testid="stDialog"] h1,
-[data-testid="stDialog"] h2 {
-  color:#061735 !important;
-  -webkit-text-fill-color:#061735 !important;
-  opacity:1 !important;
-}
-@keyframes loginPop {from {opacity:0; transform:translateY(10px) scale(.985);} to {opacity:1; transform:translateY(0) scale(1);}}
-
 @media (max-width:720px) {
-  /* Compact, non-overlapping phone header */
-  .hdr {padding:18px 14px 0 !important; text-align:center;}
-  .plane {display:none !important;}
-  .title-row {display:flex !important; align-items:center; justify-content:center; gap:8px; width:100%;}
-  .title-row > svg {width:44px !important; height:auto !important; flex:0 0 44px;}
-  .ttl {min-width:0; text-align:left;}
-  .l1 {font-size:clamp(21px,6vw,27px) !important; line-height:1.12; white-space:normal;}
-  .l2 {font-size:clamp(31px,8.5vw,38px) !important; line-height:1.05; margin-top:1px !important;}
-
-  /* Move the slogan badge below the title so it never covers the heading */
-  .blob {
-    position:relative !important; top:auto !important; right:auto !important;
-    display:block; width:max-content !important; max-width:92%; height:auto !important;
-    margin:13px auto 0; padding:8px 18px 7px !important;
-    border-radius:16px !important; text-align:center;
-    background:linear-gradient(135deg,#071B3D,#17427b) !important;
-    box-shadow:0 6px 16px rgba(7,27,61,.16);
-  }
-  .blob .script {font-size:13px !important; line-height:1.12; transform:none !important;}
-  .blob .line {width:58px !important; height:2px !important; margin:5px auto 3px !important;}
-  .blob svg {width:14px; height:13px;}
-  .tagline {font-size:11px !important; line-height:1.4; margin:10px auto 0; gap:7px; max-width:96%; flex-wrap:wrap;}
-  .tagline i {width:14px; flex:0 0 14px;}
-
-  .welcome {font-size:18px !important; line-height:1.3; margin:15px 14px 0 !important;}
-  .clock {display:grid !important; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; padding:0 14px;}
-  .cchip {display:flex; justify-content:center; align-items:center; text-align:center; min-width:0; padding:8px 6px; font-size:11px !important; line-height:1.25; white-space:normal;}
-  .qbox {width:calc(100% - 28px) !important; margin:18px auto 18px !important; padding:15px 14px !important; border-radius:16px !important;}
-  .qtitle {font-size:10px !important; letter-spacing:1.6px !important;}
-  .qtext {font-size:15px !important; line-height:1.45 !important;}
-
-  /* Reduce the very tall image stack and keep it aligned to the screen */
-  .gallery, .charts {
-    display:grid !important; grid-template-columns:minmax(0,1fr) !important;
-    width:calc(100% - 28px) !important; max-width:520px;
-    gap:14px !important; margin:18px auto 0 !important;
-  }
-  .pic {height:auto !important; min-height:0; max-height:none; aspect-ratio:2.05 / 1; border-radius:15px;}
-  .pic img, .pic .art {width:100%; height:100%; object-fit:cover;}
-  .pic .note {font-size:18px !important; line-height:1.08;}
-  .pic.left .note {left:6%; top:17%;}
-  .pic.right .note {right:4%; top:5%; font-size:17px !important;}
-
-  .sec-title {
-    width:calc(100% - 30px) !important; max-width:520px;
-    margin:28px auto 0 !important; padding:0 4px;
-    font-size:19px !important; line-height:1.32;
-    overflow-wrap:anywhere; text-align:center;
-  }
-  .sec-title::after {margin:7px auto 0;}
-  .st-key-card_exam, [class*="st-key-card_target"], [class*="st-key-calpick"] {
-    width:calc(100% - 28px) !important; max-width:520px;
-    margin:14px auto 0 !important;
-  }
-  [class*="st-key-card"] {padding:16px 14px 14px !important; margin-top:18px !important;}
-  .card-title {font-size:19px !important; line-height:1.3;}
-  .card-sub {font-size:12px !important; line-height:1.4;}
-  .foot {font-size:14px !important; padding:34px 14px 24px !important; margin-top:36px !important;}
-}
-
-@media (max-width:420px) {
-  .hdr {padding-left:10px !important; padding-right:10px !important;}
-  .title-row > svg {width:38px !important; flex-basis:38px;}
-  .l1 {font-size:22px !important;}
-  .l2 {font-size:33px !important;}
-  .tagline {font-size:10px !important; gap:5px;}
-  .tagline i {width:10px; flex-basis:10px;}
-  .gallery, .charts {width:calc(100% - 22px) !important; gap:12px !important;}
-  .pic {aspect-ratio:1.95 / 1;}
-  .clock {padding:0 11px;}
-  .cchip {font-size:10px !important;}
-  .sec-title {font-size:18px !important;}
-}
-
-.stat:focus-visible {outline:3px solid rgba(52,120,212,.28); outline-offset:3px;}
-@media (hover:none) {
-  .stat:hover {transform:none; box-shadow:0 7px 18px rgba(20,48,94,.08);}
-  .stat:hover .si {transform:none;}
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pic, .panel, .stat, .stat .si, .stat b {transition:none !important; animation:none !important;}
+  .gallery, .charts {grid-template-columns:1fr;}
+  .blob {width:170px; height:120px; padding:14px 10px 0 40px;}
+  .blob .script {font-size:16px;}
+  .plane {display:none;}
+  .l1 {font-size:28px;} .l2 {font-size:40px;} .tagline {font-size:13px;}
 }
 </style>
 """
 
+NAV_HTML = """
+<nav class="topnav">
+<span class="brand"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c3 2.6 9 2.6 12 0v-4.5"/><path d="M22 9v5"/></svg>Student Insights</span>
+<a href="#home" target="_self"><span class="ni"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><span class="nt">Home</span></a>
+<a href="#sec-target" target="_self"><span class="ni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span><span class="nt">Target</span></a>
+<a href="#sec-subjects" target="_self"><span class="ni"><svg viewBox="0 0 24 24"><path d="M2 5c3-1.5 7-1.5 10 1 3-2.5 7-2.5 10-1v14c-3-1.5-7-1.5-10 1-3-2.5-7-2.5-10-1z"/><path d="M12 6v14"/></svg></span><span class="nt">Subjects</span></a>
+<a href="#sec-exams" target="_self"><span class="ni"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="nt">Exams</span></a>
+<a href="#sec-predict" target="_self"><span class="ni"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><span class="nt">Predict</span></a>
+<a href="#sec-insights" target="_self"><span class="ni"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="nt">Insights</span></a>
+</nav>
+"""
+
 HEADER = """
-<div class="hdr">
+<div class="hdr" id="home">
 <svg class="plane" width="140" height="110" viewBox="0 0 140 110" fill="none" stroke="#14305e" stroke-width="2" stroke-linejoin="round"><path d="M84 8 L52 24 L72 30 L80 50 L90 36 L112 22 Z"/><path d="M72 30 L112 22"/><path d="M60 46 C 48 66, 40 70, 22 70" stroke-dasharray="4 5"/><circle cx="14" cy="66" r="9" stroke-dasharray="3 4"/></svg>
 <div class="blob"><span class="script">Small<br>Steps<br>Big Dreams</span><span class="line"></span><svg width="18" height="16" viewBox="0 0 24 22"><path d="M12 21 C-4 10 4 -2 12 5 C20 -2 28 10 12 21Z" fill="#fff"/></svg></div>
 <div class="title-row">
@@ -771,7 +596,7 @@ def do_login():
             u["fails"] = 0
             _write_json(USERS_FILE, users)
             _switch_user(slug, u["name"])
-            st.session_state.pop("a_msg", None)
+            st.session_state["a_msg"] = ("ok", f"Welcome back, {u['name']}!")
         else:
             u["fails"] = u.get("fails", 0) + 1
             if u["fails"] >= 5:
@@ -796,12 +621,12 @@ def do_login():
     _write_json(USERS_FILE, users)
     _write_json(progress_path(slug), parse_progress(base))
     _switch_user(slug, name)
-    st.session_state.pop("a_msg", None)
+    st.session_state["a_msg"] = ("ok", f"Account created. Welcome, {name}!")
 
 
 def do_logout():
     _switch_user(None, None)
-    st.session_state.pop("a_msg", None)
+    st.session_state["a_msg"] = ("ok", "You are signed out.")
 
 
 def show_msg(key):
@@ -1116,7 +941,7 @@ def perf_chart(p, today, days=7):
     dark = CHART_TXT == "#F8FAFC"
     BAR, TODAY, MOCK, LINE = (("#4F8FD8", "#60A5FA", "#93C5FD", "#F8FAFC") if dark
                               else ("#7fb0e8", "#1f5fd1", "#a9ccf5", "#14305e"))
-    fig, (ax, axm) = plt.subplots(1, 2, figsize=(8.6, 3.9), gridspec_kw={"width_ratios": [1.55, 1], "wspace": 0.26})
+    fig, (ax, axm) = plt.subplots(1, 2, figsize=(8.6, 4.6), gridspec_kw={"width_ratios": [1.55, 1], "wspace": 0.26})
     for a_ in (ax, axm):
         a_.grid(axis="y", color=CHART_TXT, alpha=.12)
         a_.set_axisbelow(True)
@@ -1163,18 +988,19 @@ def perf_stats_html(p, today, days=7):
     th = p.get("target_hours")
     vals = [float(v) for _, v in sorted(p.get("mocks", {}).items())]
     bi = max(range(days), key=lambda i: hrs[i])
-    boxes = [
-        ("🕒", f"{sum(hrs):g} h", "Total hours", ""),
-        ("📆", f"{sum(hrs) / days:.1f} h", "Daily average", ""),
-        ("🏆", f"{hrs[bi]:g} h" if hrs[bi] else "-", f"Best day {xs[bi]:%d %b}" if hrs[bi] else "Best day", ""),
-        ("🎯", f"{sum(1 for h in hrs if th and h >= th)}/{days}" if th else "-", "Goal days", ""),
-        ("🧪", f"{vals[-1]:g}%" if vals else "-", "Latest mock", " mock"),
-        ("📊", f"{sum(vals) / len(vals):.0f}%" if vals else "-", "Average mock", " mock"),
-        ("🥇", f"{max(vals):g}%" if vals else "-", "Best mock", " mock"),
-        ("📝", f"{len(vals)}", "Tests taken", " mock"),
+    rows = [
+        ("🕒", "Total hours", f"{sum(hrs):g} h", ""),
+        ("📆", "Daily average", f"{sum(hrs) / days:.1f} h", ""),
+        ("🏆", f"Best day ({xs[bi]:%d %b})" if hrs[bi] else "Best day", f"{hrs[bi]:g} h" if hrs[bi] else "-", " best"),
+        ("🎯", "Goal days", f"{sum(1 for h in hrs if th and h >= th)}/{days}" if th else "-", " goal"),
+        ("🧪", "Latest mock", f"{vals[-1]:g}%" if vals else "-", " mock"),
+        ("📊", "Average mock", f"{sum(vals) / len(vals):.0f}%" if vals else "-", " mock"),
+        ("🥇", "Best mock", f"{max(vals):g}%" if vals else "-", " mock"),
+        ("📝", "Tests taken", f"{len(vals)}", " mock"),
     ]
-    return '<div class="statgrid">' + "".join(
-        f'<div class="stat{c}"><span class="si">{i}</span><b>{v}</b><small>{l}</small></div>' for i, v, l, c in boxes) + '</div>'
+    return '<div class="statlist">' + "".join(
+        f'<div class="srow2{c}"><span class="sbadge">{i}</span><span class="slabel">{l}</span><b>{v}</b></div>'
+        for i, l, v, c in rows) + '</div>'
 
 
 def recent_html(p):
@@ -1186,6 +1012,16 @@ def recent_html(p):
                    for d, txt in ev) or '<div class="tmsg">Nothing yet. Log your study, tick a topic or save a mock test.</div>'
     return f'<div class="panel"><h3>🕘 Recent activity ({len(ev)})</h3><div class="actscroll">{rows}</div></div>'
 
+
+# ---------- page ----------
+left_img = load_image(("images/study-desk.jpg", "images/study-desk.jpeg", "images/study-desk.png"))
+right_img = load_image(("images/student-laptop.jpg", "images/student-laptop.jpeg", "images/student-laptop.png"))
+
+st.markdown(CSS, unsafe_allow_html=True)
+DARK_MODE = bool(st.session_state.get("dark_mode", False))
+CHART_TXT = "#F8FAFC" if DARK_MODE else "#14305e"
+if DARK_MODE:
+    st.markdown(DARK_CSS, unsafe_allow_html=True)
 
 QUOTE_SECONDS = 8   # a new quote appears automatically every 8 seconds
 
@@ -1204,252 +1040,256 @@ def rotating_quote():
                 unsafe_allow_html=True)
 
 
-# ---------- page ----------
-left_img = load_image(("images/study-desk.jpg", "images/study-desk.jpeg", "images/study-desk.png"))
-right_img = load_image(("images/student-laptop.jpg", "images/student-laptop.jpeg", "images/student-laptop.png"))
-
-st.markdown(CSS, unsafe_allow_html=True)
-DARK_MODE = bool(st.session_state.get("dark_mode", False))
-CHART_TXT = "#F8FAFC" if DARK_MODE else "#14305e"
-if DARK_MODE:
-    st.markdown(DARK_CSS, unsafe_allow_html=True)
-st.markdown(HEADER.replace("__T1__", TITLE_LINE1).replace("__T2__", TITLE_LINE2), unsafe_allow_html=True)
-live_clock()
-_, _tg, _ = st.columns([2, 1, 2])
-with _tg:
-    st.toggle("🌙 Dark mode", key="dark_mode")
-st.markdown(GALLERY.replace("__LEFT__", left_img or LEFT_ART).replace("__RIGHT__", right_img or RIGHT_ART),
-            unsafe_allow_html=True)
-
-# ---------- required account sign-in ----------
-@st.dialog("👋 Welcome to Student Performance Predictor")
+# ---------- sign-in is required: pop-up window (press Enter to submit) ----------
+@st.dialog("👋 Welcome to Student Performance Predictor", width="small")
 def login_dialog():
-    st.markdown(
-        '<p style="text-align:center;color:#46597d;font-size:14px">'
-        'Sign in to continue, or create your account with a name and a 4–8 digit PIN.</p>',
-        unsafe_allow_html=True
-    )
-    st.text_input(
-        "Your name",
-        value=st.query_params.get("name", ""),
-        placeholder="Enter your name",
-        max_chars=30,
-        key="acc_name"
-    )
-    st.text_input(
-        "PIN (4 to 8 digits)",
-        type="password",
-        placeholder="Enter your PIN",
-        max_chars=8,
-        key="acc_pin"
-    )
-    if st.button(
-        "Sign in / Create account",
-        icon=":material/login:",
-        key="btn_login",
-        use_container_width=True
-    ):
-        # Give immediate feedback while the PIN is checked and account data is loaded.
-        with st.spinner("Checking your account…"):
-            do_login()
+    st.markdown('<div class="acct-hi" style="text-align:center">Sign in to continue, or create your account with a name and a 4–8 digit PIN.</div>',
+                unsafe_allow_html=True)
+    with st.form("login_form", clear_on_submit=False, border=True):
+        st.markdown('<div class="lbl">Your name</div>', unsafe_allow_html=True)
+        st.text_input("Your name", value=st.query_params.get("name", ""), placeholder="Enter your name",
+                      label_visibility="collapsed", key="acc_name", max_chars=30)
+        st.markdown('<div class="lbl">PIN (4–8 digits)</div>', unsafe_allow_html=True)
+        st.text_input("PIN", type="password", placeholder="Enter your PIN",
+                      label_visibility="collapsed", key="acc_pin", max_chars=8)
+        submitted = st.form_submit_button("Sign in / Create account")      # Enter in either box also submits
+    st.markdown('<div class="acct-note" style="text-align:left">Your study targets, marks, subjects and progress are saved privately in your account.</div>',
+                unsafe_allow_html=True)
+    if submitted:
+        do_login()
         if st.session_state.get("user"):
             st.rerun()
-    show_msg("a_msg")
-    st.caption("Your study targets, marks, subjects and progress are saved privately in your account.")
+        show_msg("a_msg")
 
-# The dashboard is available only after successful sign-in.
+
+HERO = HEADER.replace("__T1__", TITLE_LINE1).replace("__T2__", TITLE_LINE2)
+GALLERY_HTML = GALLERY.replace("__LEFT__", left_img or LEFT_ART).replace("__RIGHT__", right_img or RIGHT_ART)
+
 if not st.session_state.get("user"):
+    st.markdown(HERO, unsafe_allow_html=True)
+    st.markdown(GALLERY_HTML, unsafe_allow_html=True)
     login_dialog()
+    st.markdown('<div class="acct-hi" style="text-align:center;margin:40px 0 10px">🔐 Please sign in to use the app.</div>',
+                unsafe_allow_html=True)
+    _, _ob, _ = st.columns([2, 1, 2])
+    with _ob:
+        with st.container(key="pillbtn_open"):
+            st.button("Open sign in", icon=":material/login:", key="btn_open_login")
     st.stop()
 
-# Compact signed-in status instead of a full-width account panel.
-with st.container(key="account_status"):
-    acc_left, acc_right = st.columns([4, 1], vertical_alignment="center")
-    with acc_left:
-        st.markdown(
-            f'<div class="acct-hi">👋 Signed in as '
-            f'<b>{_html.escape(st.session_state.get("user_name", ""))}</b><br>'
-            '<small>Your study progress is being saved privately.</small></div>',
-            unsafe_allow_html=True
-        )
-    with acc_right:
-        st.button("Log out", icon=":material/logout:", on_click=do_logout,
-                  key="btn_logout", use_container_width=True)
+# ---------- left navigation bar (sidebar) ----------
+PAGES = [("home", "Home"), ("planner", "Planner"), ("predict", "Predict"), ("insights", "Insights")]
+PAGE = st.session_state.get("page", "home")
+if PAGE not in dict(PAGES):
+    PAGE = "home"
+
+
+def go_page(p):
+    st.session_state["page"] = p
+
+
+BRAND_SVG = '<svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c3 2.6 9 2.6 12 0v-4.5"/><path d="M22 9v5"/></svg>'
+with st.sidebar:
+    st.markdown(f'<div class="sb-brand">{BRAND_SVG}<span>Student Insights</span></div>', unsafe_allow_html=True)
+    for _key, _label in PAGES:
+        with st.container(key=("navon_" if PAGE == _key else "navoff_") + _key):
+            st.button(_label, on_click=go_page, args=(_key,), key=f"btn_nav_{_key}")
+    st.markdown('<div class="sb-sep"></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="acct-hi" style="margin:0 0 10px">👋 Signed in as <b>{_html.escape(st.session_state.get("user_name", ""))}</b></div>',
+                unsafe_allow_html=True)
+    st.toggle("🌙 Dark mode", key="dark_mode")
+    with st.container(key="pillbtn_logout"):
+        st.button("Log out", icon=":material/logout:", on_click=do_logout, key="btn_logout")
+_m = st.session_state.pop("a_msg", None)
+if _m and _m[0] == "ok":
+    st.toast(_m[1], icon="👋")
 
 _prog = load_progress()
 _today = today_date()
 
-# ---------- daily motivation ----------
-rotating_quote()
+# ---------- four separate pages: only the page chosen in the left bar is shown ----------
+if PAGE == "home":
+    st.markdown(HERO, unsafe_allow_html=True)
+    live_clock()
+    st.markdown(GALLERY_HTML, unsafe_allow_html=True)
+    st.markdown('<div class="sec-title">📊 Daily Progress &amp; Study Streak</div>', unsafe_allow_html=True)
+    st.markdown(daily_html(_prog, _today), unsafe_allow_html=True)
+    _, qmid, _ = st.columns([1, 1.3, 1])
+    with qmid:
+        rotating_quote()
 
-# ---------- study target ----------
-st.markdown('<div class="sec-title">🎯 Set Target &amp; Log Today’s Study</div>', unsafe_allow_html=True)
-with st.container(key="card_target"):
-    c1, c2, c3 = st.columns(3, gap="medium")
-    with c1:
-        with st.container(key="tile_hours"):
-            st.markdown('<div class="card-title" style="font-size:17px">⏱ Daily study-hours target</div>', unsafe_allow_html=True)
-            st.number_input("Target hours", min_value=0.5, max_value=24.0, step=0.5, value=_prog.get("target_hours"),
-                            placeholder="Example: 6", label_visibility="collapsed", key="t_hours")
-            st.button("Set Target", icon=":material/flag:", on_click=save_target, key="btn_target")
-            show_msg("tg_msg")
-    with c2:
-        with st.container(key="tile_today"):
-            st.markdown(f'<div class="card-title" style="font-size:17px">📝 Hours studied today ({_today:%d %b})</div>', unsafe_allow_html=True)
-            st.number_input("Hours today", min_value=0.0, max_value=24.0, step=0.5,
-                            value=_prog.get("log", {}).get(_today.isoformat()),
-                            placeholder="Example: 5.5", label_visibility="collapsed", key="log_hours")
-            st.button("Mark Today Completed", icon=":material/check_circle:", on_click=log_today, key="btn_log")
-            show_msg("lg_msg")
-    with c3:
-        with st.container(key="tile_mock"):
-            st.markdown('<div class="card-title" style="font-size:17px">🧪 Mock test marks</div>', unsafe_allow_html=True)
-            st.number_input("Mock test marks", min_value=0.0, max_value=100.0, step=0.5,
-                            value=_prog.get("mocks", {}).get(_today.isoformat()),
-                            placeholder="Example: 72 (out of 100)", label_visibility="collapsed", key="mock_marks")
-            st.button("Save Mock Marks", icon=":material/quiz:", on_click=save_mock, key="btn_mock")
-            show_msg("mk_msg")
-            if _prog.get("mocks"):
-                _k = max(_prog["mocks"])
-                st.markdown(f'<div class="ptext">Latest: {float(_prog["mocks"][_k]):g}% on {date.fromisoformat(_k):%d %b}</div>',
+elif PAGE == "planner":
+    # ---------- study target ----------
+    st.markdown('<span id="sec-target" class="anchor"></span><div class="sec-title">🎯 Set Target &amp; Log Today’s Study</div>', unsafe_allow_html=True)
+    with st.container(key="card_target"):
+        c1, c2, c3 = st.columns(3, gap="medium")
+        with c1:
+            with st.container(key="tile_hours"):
+                st.markdown('<div class="card-title" style="font-size:17px">⏱ Daily study-hours target</div>', unsafe_allow_html=True)
+                st.number_input("Target hours", min_value=0.5, max_value=24.0, step=0.5, value=_prog.get("target_hours"),
+                                placeholder="Example: 6", label_visibility="collapsed", key="t_hours")
+                st.button("Set Target", icon=":material/flag:", on_click=save_target, key="btn_target")
+                show_msg("tg_msg")
+        with c2:
+            with st.container(key="tile_today"):
+                st.markdown(f'<div class="card-title" style="font-size:17px">📝 Hours studied today ({_today:%d %b})</div>', unsafe_allow_html=True)
+                st.number_input("Hours today", min_value=0.0, max_value=24.0, step=0.5,
+                                value=_prog.get("log", {}).get(_today.isoformat()),
+                                placeholder="Example: 5.5", label_visibility="collapsed", key="log_hours")
+                st.button("Mark Today Completed", icon=":material/check_circle:", on_click=log_today, key="btn_log")
+                show_msg("lg_msg")
+        with c3:
+            with st.container(key="tile_mock"):
+                st.markdown('<div class="card-title" style="font-size:17px">🧪 Mock test marks</div>', unsafe_allow_html=True)
+                st.number_input("Mock test marks", min_value=0.0, max_value=100.0, step=0.5,
+                                value=_prog.get("mocks", {}).get(_today.isoformat()),
+                                placeholder="Example: 72 (out of 100)", label_visibility="collapsed", key="mock_marks")
+                st.button("Save Mock Marks", icon=":material/quiz:", on_click=save_mock, key="btn_mock")
+                show_msg("mk_msg")
+                if _prog.get("mocks"):
+                    _k = max(_prog["mocks"])
+                    st.markdown(f'<div class="ptext">Latest: {float(_prog["mocks"][_k]):g}% on {date.fromisoformat(_k):%d %b}</div>',
+                                unsafe_allow_html=True)
+
+
+    st.markdown('<span id="sec-subjects" class="anchor"></span><div class="sec-title">📚 Subjects &amp; Topics</div>', unsafe_allow_html=True)
+    with st.container(key="card_target_topics"):
+        st.markdown(subject_rings_html(_prog), unsafe_allow_html=True)
+        st.markdown('<div class="card-title" style="font-size:19px">➕ Add a subject and topic</div>', unsafe_allow_html=True)
+        a1, a2, a3 = st.columns([3, 3, 1.4], gap="medium", vertical_alignment="bottom")
+        with a1:
+            st.markdown('<div class="lbl">Subject name</div>', unsafe_allow_html=True)
+            st.text_input("Subject name", placeholder="Example: Mathematics", label_visibility="collapsed", key="ts_sub")
+        with a2:
+            st.markdown('<div class="lbl">Topic to complete</div>', unsafe_allow_html=True)
+            st.text_input("Topic", placeholder="Example: Integration", label_visibility="collapsed", key="ts_topic")
+        with a3:
+            st.button("Add Topic", icon=":material/add:", on_click=add_topic, key="btn_topic")
+        show_msg("t_msg")
+
+        if _prog["subjects"]:
+            st.markdown('<div class="lbl" style="margin-top:14px">Tick the box when you finish a topic ✅</div>', unsafe_allow_html=True)
+            _cols = st.columns(2, gap="medium")
+            for i, (sub, topics) in enumerate(_prog["subjects"].items()):
+                with _cols[i % 2]:
+                    with st.container(key=f"tile_sub_{i}"):
+                        n_done = sum(1 for t in topics if t.get("done"))
+                        pct = n_done / len(topics) * 100
+                        st.markdown(f'<div class="subj-row">{ring_svg(pct, PALETTE[i % len(PALETTE)], 72)}<div>'
+                                    f'<div class="subj-name">{_html.escape(sub)}</div>'
+                                    f'<div class="subj-count">{n_done}/{len(topics)} topics completed</div></div></div>', unsafe_allow_html=True)
+                        for t in topics:
+                            r1, r2 = st.columns([8, 1], vertical_alignment="center")
+                            with r1:
+                                if t.get("done"):
+                                    label = f"~~{t['name']}~~ · done {date.fromisoformat(t['done']):%d %b}"
+                                else:
+                                    label = t["name"]
+                                st.checkbox(label, value=bool(t.get("done")), key=f"chk_{t['id']}",
+                                            on_change=toggle_topic, args=(t["id"],))
+                            with r2:
+                                st.button(":material/delete:", key=f"rm_tp_{t['id']}", on_click=remove_topic, args=(t["id"],))
+
+
+    # ---------- exam details ----------
+
+    st.markdown('<span id="sec-exams" class="anchor"></span><div class="sec-title">📅 Exam Details</div>', unsafe_allow_html=True)
+    with st.container(key="card_exam"):
+        ea, eb = st.columns([1, 1.2], gap="large")
+        with ea:
+            st.markdown('<div class="card-title" style="font-size:19px">➕ Add an exam</div>', unsafe_allow_html=True)
+            st.markdown('<div class="lbl">Exam subject</div>', unsafe_allow_html=True)
+            st.text_input("Exam subject", placeholder="Example: Mathematics", label_visibility="collapsed", key="ex_sub")
+            st.markdown('<div class="lbl">Exam date</div>', unsafe_allow_html=True)
+            st.date_input("Exam date", value=None, min_value=_today, format="DD/MM/YYYY",
+                          label_visibility="collapsed", key="ex_date")
+            st.button("Save Exam", icon=":material/event:", on_click=add_exam, key="btn_exam")
+            show_msg("e_msg")
+        with eb:
+            st.markdown('<div class="card-title" style="font-size:19px">⏳ Upcoming exams</div>', unsafe_allow_html=True)
+            _exams = sorted(_prog["exams"], key=lambda e: (e.get("date", "") < _today.isoformat(), e.get("date", "")))
+            if not _exams:
+                st.markdown('<div class="tmsg" style="text-align:center">No exams added yet.</div>', unsafe_allow_html=True)
+            for e in _exams:
+                r1, r2 = st.columns([6, 1], vertical_alignment="center")
+                with r1:
+                    st.markdown(exam_row_html(e, _today), unsafe_allow_html=True)
+                with r2:
+                    st.button(":material/delete:", key=f"rm_ex_{e['id']}", on_click=remove_exam, args=(e["id"],))
+
+
+
+elif PAGE == "predict":
+    st.markdown(f'<span id="sec-predict" class="anchor"></span><div class="sec-title">{PREDICT_TITLE}</div>', unsafe_allow_html=True)
+    _, middle, _ = st.columns([1, 1.3, 1])
+    with middle:
+        with st.container(key="card"):
+            st.markdown(CARD_TOP, unsafe_allow_html=True)
+            st.markdown('<div class="lbl">Study hours per day (0 - 24)</div>', unsafe_allow_html=True)
+            hours = st.number_input("Study hours", min_value=0.0, max_value=24.0, value=None, step=0.5,
+                                    placeholder="Enter study hours (0 - 24)", label_visibility="collapsed")
+            st.markdown('<div class="lbl">Level of understanding (1 = low, 10 = excellent)</div>', unsafe_allow_html=True)
+            understand = st.number_input("Understanding level", min_value=1, max_value=10, value=None, step=1,
+                                         placeholder="Enter understanding level (1 - 10)", label_visibility="collapsed")
+            st.markdown('<div class="lbl">Health level (1 = poor, 10 = excellent)</div>', unsafe_allow_html=True)
+            health = st.number_input("Health level", min_value=1, max_value=10, value=None, step=1,
+                                     placeholder="Enter health level (1 - 10)", label_visibility="collapsed")
+
+            if st.button("Predict Marks", icon=":material/show_chart:"):
+                if hours is None or understand is None or health is None:
+                    st.session_state["err"], st.session_state["res"] = True, None
+                else:
+                    st.session_state["err"], st.session_state["res"] = False, (hours, health, understand)
+
+            if st.session_state.get("err"):
+                st.markdown('<div class="err"><b>!</b>Fill all three boxes: hours 0 to 24, understanding 1 to 10, health 1 to 10</div>',
                             unsafe_allow_html=True)
 
+            res = st.session_state.get("res")
+            if res:
+                h, hl, u = res
+                marks = predict(h, hl, u)
+                st.markdown(f'<div class="result">✦ Predicted Marks: {marks:.1f}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="tags">Study {h:g} h &nbsp;•&nbsp; Understanding: {level(u, ("Low", "Medium", "High"))} ({u}/10)'
+                            f' &nbsp;•&nbsp; Health: {level(hl, ("Poor", "Fair", "Good"))} ({hl}/10)</div>', unsafe_allow_html=True)
+                ideas = [("+1 study hour", predict(min(h + 1, 24), hl, u) - marks),
+                         ("Understanding to 10", predict(h, hl, 10) - marks),
+                         ("Health to 10", predict(h, 10, u) - marks)]
+                chips = "".join(f'<span class="chip">{n}: +{g:.1f} marks</span>' for n, g in ideas if g > 0.05)
+                if chips:
+                    st.markdown(f'<div class="chips">{chips}</div>', unsafe_allow_html=True)
+                if h > 10:
+                    st.markdown('<div class="hint">The model learned from 1–9 hours of data, so higher values are only rough estimates.</div>',
+                                unsafe_allow_html=True)
 
-st.markdown('<div class="sec-title">📊 Daily Progress &amp; Study Streak</div>', unsafe_allow_html=True)
-st.markdown(daily_html(_prog, _today), unsafe_allow_html=True)
-
-st.markdown('<div class="sec-title">📚 Subjects &amp; Topics</div>', unsafe_allow_html=True)
-with st.container(key="card_target_topics"):
-    st.markdown(subject_rings_html(_prog), unsafe_allow_html=True)
-    st.markdown('<div class="card-title" style="font-size:19px">➕ Add a subject and topic</div>', unsafe_allow_html=True)
-    a1, a2, a3 = st.columns([3, 3, 1.4], gap="medium", vertical_alignment="bottom")
-    with a1:
-        st.markdown('<div class="lbl">Subject name</div>', unsafe_allow_html=True)
-        st.text_input("Subject name", placeholder="Example: Mathematics", label_visibility="collapsed", key="ts_sub")
-    with a2:
-        st.markdown('<div class="lbl">Topic to complete</div>', unsafe_allow_html=True)
-        st.text_input("Topic", placeholder="Example: Integration", label_visibility="collapsed", key="ts_topic")
-    with a3:
-        st.button("Add Topic", icon=":material/add:", on_click=add_topic, key="btn_topic")
-    show_msg("t_msg")
-
-    if _prog["subjects"]:
-        st.markdown('<div class="lbl" style="margin-top:14px">Tick the box when you finish a topic ✅</div>', unsafe_allow_html=True)
-        _cols = st.columns(2, gap="medium")
-        for i, (sub, topics) in enumerate(_prog["subjects"].items()):
-            with _cols[i % 2]:
-                with st.container(key=f"tile_sub_{i}"):
-                    n_done = sum(1 for t in topics if t.get("done"))
-                    pct = n_done / len(topics) * 100
-                    st.markdown(f'<div class="subj-row">{ring_svg(pct, PALETTE[i % len(PALETTE)], 72)}<div>'
-                                f'<div class="subj-name">{_html.escape(sub)}</div>'
-                                f'<div class="subj-count">{n_done}/{len(topics)} topics completed</div></div></div>', unsafe_allow_html=True)
-                    for t in topics:
-                        r1, r2 = st.columns([8, 1], vertical_alignment="center")
-                        with r1:
-                            if t.get("done"):
-                                label = f"~~{t['name']}~~ · done {date.fromisoformat(t['done']):%d %b}"
-                            else:
-                                label = t["name"]
-                            st.checkbox(label, value=bool(t.get("done")), key=f"chk_{t['id']}",
-                                        on_change=toggle_topic, args=(t["id"],))
-                        with r2:
-                            st.button(":material/delete:", key=f"rm_tp_{t['id']}", on_click=remove_topic, args=(t["id"],))
-
-
-# ---------- exam details ----------
-
-st.markdown('<div class="sec-title">📅 Exam Details</div>', unsafe_allow_html=True)
-with st.container(key="card_exam"):
-    ea, eb = st.columns([1, 1.2], gap="large")
-    with ea:
-        st.markdown('<div class="card-title" style="font-size:19px">➕ Add an exam</div>', unsafe_allow_html=True)
-        st.markdown('<div class="lbl">Exam subject</div>', unsafe_allow_html=True)
-        st.text_input("Exam subject", placeholder="Example: Mathematics", label_visibility="collapsed", key="ex_sub")
-        st.markdown('<div class="lbl">Exam date</div>', unsafe_allow_html=True)
-        st.date_input("Exam date", value=None, min_value=_today, format="DD/MM/YYYY",
-                      label_visibility="collapsed", key="ex_date")
-        st.button("Save Exam", icon=":material/event:", on_click=add_exam, key="btn_exam")
-        show_msg("e_msg")
-    with eb:
-        st.markdown('<div class="card-title" style="font-size:19px">⏳ Upcoming exams</div>', unsafe_allow_html=True)
-        _exams = sorted(_prog["exams"], key=lambda e: (e.get("date", "") < _today.isoformat(), e.get("date", "")))
-        if not _exams:
-            st.markdown('<div class="tmsg" style="text-align:center">No exams added yet.</div>', unsafe_allow_html=True)
-        for e in _exams:
-            r1, r2 = st.columns([6, 1], vertical_alignment="center")
-            with r1:
-                st.markdown(exam_row_html(e, _today), unsafe_allow_html=True)
-            with r2:
-                st.button(":material/delete:", key=f"rm_ex_{e['id']}", on_click=remove_exam, args=(e["id"],))
-
-
-st.markdown(f'<div class="sec-title">{PREDICT_TITLE}</div>', unsafe_allow_html=True)
-_, middle, _ = st.columns([1, 1.3, 1])
-with middle:
-    with st.container(key="card"):
-        st.markdown(CARD_TOP, unsafe_allow_html=True)
-        st.markdown('<div class="lbl">Study hours per day (0 - 24)</div>', unsafe_allow_html=True)
-        hours = st.number_input("Study hours", min_value=0.0, max_value=24.0, value=None, step=0.5,
-                                placeholder="Enter study hours (0 - 24)", label_visibility="collapsed")
-        st.markdown('<div class="lbl">Level of understanding (1 = low, 10 = excellent)</div>', unsafe_allow_html=True)
-        understand = st.number_input("Understanding level", min_value=1, max_value=10, value=None, step=1,
-                                     placeholder="Enter understanding level (1 - 10)", label_visibility="collapsed")
-        st.markdown('<div class="lbl">Health level (1 = poor, 10 = excellent)</div>', unsafe_allow_html=True)
-        health = st.number_input("Health level", min_value=1, max_value=10, value=None, step=1,
-                                 placeholder="Enter health level (1 - 10)", label_visibility="collapsed")
-
-        if st.button("Predict Marks", icon=":material/show_chart:"):
-            if hours is None or understand is None or health is None:
-                st.session_state["err"], st.session_state["res"] = True, None
-            else:
-                st.session_state["err"], st.session_state["res"] = False, (hours, health, understand)
-
-        if st.session_state.get("err"):
-            st.markdown('<div class="err"><b>!</b>Fill all three boxes: hours 0 to 24, understanding 1 to 10, health 1 to 10</div>',
-                        unsafe_allow_html=True)
-
-        res = st.session_state.get("res")
-        if res:
-            h, hl, u = res
-            marks = predict(h, hl, u)
-            st.markdown(f'<div class="result">✦ Predicted Marks: {marks:.1f}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="tags">Study {h:g} h &nbsp;•&nbsp; Understanding: {level(u, ("Low", "Medium", "High"))} ({u}/10)'
-                        f' &nbsp;•&nbsp; Health: {level(hl, ("Poor", "Fair", "Good"))} ({hl}/10)</div>', unsafe_allow_html=True)
-            ideas = [("+1 study hour", predict(min(h + 1, 24), hl, u) - marks),
-                     ("Understanding to 10", predict(h, hl, 10) - marks),
-                     ("Health to 10", predict(h, 10, u) - marks)]
-            chips = "".join(f'<span class="chip">{n}: +{g:.1f} marks</span>' for n, g in ideas if g > 0.05)
-            if chips:
-                st.markdown(f'<div class="chips">{chips}</div>', unsafe_allow_html=True)
-            if h > 10:
-                st.markdown('<div class="hint">The model learned from 1–9 hours of data, so higher values are only rough estimates.</div>',
-                            unsafe_allow_html=True)
-res = st.session_state.get("res")
-if res:
-    h, hl, u = res
-    st.markdown(
-        '<div class="charts">'
-        '<div class="panel"><h3>📈 What-if simulation</h3>' + sim_chart(h, hl, u, predict(h, hl, u)) + '</div>'
-        '<div class="panel"><h3>🧩 What drives your marks</h3>' + contrib_chart(h, hl, u) + '</div>'
-        '</div>', unsafe_allow_html=True)
+    res = st.session_state.get("res")
+    if res:
+        h, hl, u = res
+        st.markdown(
+            '<div class="charts">'
+            '<div class="panel"><h3>📈 What-if simulation</h3>' + sim_chart(h, hl, u, predict(h, hl, u)) + '</div>'
+            '<div class="panel"><h3>🧩 What drives your marks</h3>' + contrib_chart(h, hl, u) + '</div>'
+            '</div>', unsafe_allow_html=True)
 
 
 
-# ---------- performance analytics and study history ----------
-_prog = load_progress()
-st.markdown('<div class="sec-title">📈 Performance Analytics &amp; Study History</div>', unsafe_allow_html=True)
-_chart = perf_chart(_prog, _today)
-_perf = '<div class="panel wide"><h3>📈 Study hours &amp; mock test performance</h3>' + (
-    '<div class="perfgrid"><div>' + _chart + '</div>' + perf_stats_html(_prog, _today) + '</div>' if _chart else
-    '<div class="tmsg">Log your study hours and save mock test marks to see this graph.</div>') + '</div>'
-st.markdown('<div class="charts">' + _perf + '</div>', unsafe_allow_html=True)
 
-# the calendar selector sits right above the calendar
-with st.container(key="calpick"):
-    _mode = st.radio("Calendar shows", ["Topics completed", "Study hours"], horizontal=True, key="heat_mode")
-st.markdown('<div class="charts" style="margin-top:6px">' + heatmap_html(_prog, _today, "hours" if _mode == "Study hours" else "topics")
-            + progress_html(_prog, st.session_state.get("res"), _today) + recent_html(_prog) + '</div>', unsafe_allow_html=True)
+elif PAGE == "insights":
+    # ---------- performance analytics and study history ----------
+    _prog = load_progress()
+    st.markdown('<span id="sec-insights" class="anchor"></span><div class="sec-title">📈 Performance Analytics &amp; Study History</div>', unsafe_allow_html=True)
+    _chart = perf_chart(_prog, _today)
+    _perf = '<div class="panel wide"><h3>📈 Study hours &amp; mock test performance</h3>' + (
+        '<div class="perfgrid"><div>' + _chart + '</div>' + perf_stats_html(_prog, _today) + '</div>' if _chart else
+        '<div class="tmsg">Log your study hours and save mock test marks to see this graph.</div>') + '</div>'
+    st.markdown('<div class="charts">' + _perf + '</div>', unsafe_allow_html=True)
+
+    # the calendar selector sits right above the calendar
+    with st.container(key="calpick"):
+        _mode = st.radio("Calendar shows", ["Topics completed", "Study hours"], horizontal=True, key="heat_mode")
+    st.markdown('<div class="charts" style="margin-top:6px">' + heatmap_html(_prog, _today, "hours" if _mode == "Study hours" else "topics")
+                + progress_html(_prog, st.session_state.get("res"), _today) + recent_html(_prog) + '</div>', unsafe_allow_html=True)
+
 
 
 st.markdown('<div class="foot">🎓 Study Smart | Work Hard | Achieve More</div>', unsafe_allow_html=True)
