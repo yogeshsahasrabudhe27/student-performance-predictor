@@ -101,6 +101,45 @@ div[role="dialog"] {background:#1E293B !important;} div[role="dialog"] h2, div[r
 .stat, .stat.mock {background:#101827 !important; border-color:#334155 !important;} .stat b {color:#F8FAFC !important;} .stat small {color:#94A3B8 !important;}
 .actscroll {scrollbar-color:#475569 #1E293B;} .actscroll::-webkit-scrollbar-track {background:#1E293B;} .actscroll::-webkit-scrollbar-thumb {background:#475569;}
 
+
+/* ---------- Responsive bottom navigation for phones ---------- */
+.mobile-nav-spacer {display:none;}
+@media (max-width: 768px) {
+  section[data-testid="stSidebar"] {display:none !important;}
+  [data-testid="stSidebarCollapsedControl"], [data-testid="stSidebarHeader"] {display:none !important;}
+  .block-container {padding-bottom:112px !important;}
+  [class*="st-key-mobile_nav"] {
+    display:block !important; position:fixed !important;
+    left:10px !important; right:10px !important; bottom:10px !important;
+    width:auto !important; z-index:99999 !important;
+    padding:7px 5px 5px !important; margin:0 !important;
+    background:rgba(20,48,94,.97) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    border-radius:18px !important;
+    box-shadow:0 8px 28px rgba(8,25,55,.32) !important;
+    backdrop-filter:blur(12px);
+  }
+  [class*="st-key-mobile_nav"] [data-testid="stHorizontalBlock"] {gap:3px !important;}
+  [class*="st-key-mobile_nav"] [data-testid="column"] {min-width:0 !important; padding:0 2px !important;}
+  [class*="st-key-mobile_nav"] [data-testid="stButton"] {width:100% !important;}
+  [class*="st-key-mobile_nav"] button {
+    width:100% !important; min-height:48px !important; height:52px !important;
+    padding:5px 1px !important; border:0 !important; border-radius:12px !important;
+    background:transparent !important; color:#eaf2ff !important;
+    box-shadow:none !important; justify-content:center !important;
+  }
+  [class*="st-key-mobile_nav"] button p {
+    color:inherit !important; font-size:11px !important; font-weight:700 !important;
+    line-height:1.1 !important; margin:0 !important;
+  }
+  [class*="st-key-mobile_nav"] button span[data-testid="stIconMaterial"] {font-size:20px !important;}
+  [class*="st-key-mobile_active_"] button {
+    background:#2d69d7 !important; color:#fff !important;
+    box-shadow:0 4px 12px rgba(70,140,255,.35) !important;
+  }
+}
+@media (min-width:769px) { [class*="st-key-mobile_nav"] {display:none !important;} }
+
 </style>
 """
 
@@ -1171,6 +1210,19 @@ with st.sidebar:
     st.toggle("🌙 Dark mode", key="dark_mode")
     with st.container(key="pillbtn_logout"):
         st.button("Log out", icon=":material/logout:", on_click=do_logout, key="btn_logout")
+
+# Fixed four-item bottom navigation on phones; the desktop keeps its left sidebar.
+with st.container(key="mobile_nav"):
+    _nav_cols = st.columns(4, gap="small")
+    _nav_icons = {"home": ":material/home:", "planner": ":material/menu_book:",
+                  "predict": ":material/insights:", "insights": ":material/bar_chart:"}
+    for _col, (_nav_key, _nav_label) in zip(_nav_cols, PAGES):
+        with _col:
+            with st.container(key=("mobile_active_" if PAGE == _nav_key else "mobile_inactive_") + _nav_key):
+                st.button(_nav_label, icon=_nav_icons[_nav_key],
+                          on_click=go_page, args=(_nav_key,),
+                          key=f"mobile_btn_{_nav_key}", use_container_width=True,
+                          type="primary" if PAGE == _nav_key else "secondary")
 _m = st.session_state.pop("a_msg", None)
 if _m and _m[0] == "ok":
     st.toast(_m[1], icon="👋")
