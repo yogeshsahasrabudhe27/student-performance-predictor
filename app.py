@@ -119,8 +119,17 @@ div[role="dialog"] {background:#1E293B !important;} div[role="dialog"] h2, div[r
     box-shadow:0 8px 28px rgba(8,25,55,.32) !important;
     backdrop-filter:blur(12px);
   }
-  [class*="st-key-mobile_nav"] [data-testid="stHorizontalBlock"] {gap:3px !important;}
-  [class*="st-key-mobile_nav"] [data-testid="column"] {min-width:0 !important; padding:0 2px !important;}
+  /* Override Streamlit's phone rule that stacks columns vertically. */
+  [class*="st-key-mobile_nav"] [data-testid="stHorizontalBlock"] {
+    display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
+    align-items:stretch !important; gap:3px !important; width:100% !important;
+  }
+  [class*="st-key-mobile_nav"] [data-testid="column"] {
+    display:block !important; flex:1 1 0% !important;
+    width:25% !important; min-width:0 !important; max-width:25% !important;
+    padding:0 2px !important;
+  }
+  [class*="st-key-mobile_nav"] [data-testid="column"] > div {width:100% !important;}
   [class*="st-key-mobile_nav"] [data-testid="stButton"] {width:100% !important;}
   [class*="st-key-mobile_nav"] button {
     width:100% !important; min-height:48px !important; height:52px !important;
