@@ -1,0 +1,7 @@
+build/
+dist/
+progress.json
+*.spec
+test_window.py
+__pycache__/
+*.pyc
