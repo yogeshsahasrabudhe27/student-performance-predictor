@@ -101,54 +101,6 @@ div[role="dialog"] {background:#1E293B !important;} div[role="dialog"] h2, div[r
 .stat, .stat.mock {background:#101827 !important; border-color:#334155 !important;} .stat b {color:#F8FAFC !important;} .stat small {color:#94A3B8 !important;}
 .actscroll {scrollbar-color:#475569 #1E293B;} .actscroll::-webkit-scrollbar-track {background:#1E293B;} .actscroll::-webkit-scrollbar-thumb {background:#475569;}
 
-
-/* ---------- Responsive bottom navigation for phones ---------- */
-.mobile-nav-spacer {display:none;}
-@media (max-width: 768px) {
-  section[data-testid="stSidebar"] {display:none !important;}
-  [data-testid="stSidebarCollapsedControl"], [data-testid="stSidebarHeader"] {display:none !important;}
-  .block-container {padding-bottom:112px !important;}
-  [class*="st-key-mobile_nav"] {
-    display:block !important; position:fixed !important;
-    left:10px !important; right:10px !important; bottom:10px !important;
-    width:auto !important; z-index:99999 !important;
-    padding:7px 5px 5px !important; margin:0 !important;
-    background:rgba(20,48,94,.97) !important;
-    border:1px solid rgba(255,255,255,.16) !important;
-    border-radius:18px !important;
-    box-shadow:0 8px 28px rgba(8,25,55,.32) !important;
-    backdrop-filter:blur(12px);
-  }
-  /* Override Streamlit's phone rule that stacks columns vertically. */
-  [class*="st-key-mobile_nav"] [data-testid="stHorizontalBlock"] {
-    display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important;
-    align-items:stretch !important; gap:3px !important; width:100% !important;
-  }
-  [class*="st-key-mobile_nav"] [data-testid="column"] {
-    display:block !important; flex:1 1 0% !important;
-    width:25% !important; min-width:0 !important; max-width:25% !important;
-    padding:0 2px !important;
-  }
-  [class*="st-key-mobile_nav"] [data-testid="column"] > div {width:100% !important;}
-  [class*="st-key-mobile_nav"] [data-testid="stButton"] {width:100% !important;}
-  [class*="st-key-mobile_nav"] button {
-    width:100% !important; min-height:48px !important; height:52px !important;
-    padding:5px 1px !important; border:0 !important; border-radius:12px !important;
-    background:transparent !important; color:#eaf2ff !important;
-    box-shadow:none !important; justify-content:center !important;
-  }
-  [class*="st-key-mobile_nav"] button p {
-    color:inherit !important; font-size:11px !important; font-weight:700 !important;
-    line-height:1.1 !important; margin:0 !important;
-  }
-  [class*="st-key-mobile_nav"] button span[data-testid="stIconMaterial"] {font-size:20px !important;}
-  [class*="st-key-mobile_active_"] button {
-    background:#2d69d7 !important; color:#fff !important;
-    box-shadow:0 4px 12px rgba(70,140,255,.35) !important;
-  }
-}
-@media (min-width:769px) { [class*="st-key-mobile_nav"] {display:none !important;} }
-
 </style>
 """
 
@@ -387,77 +339,6 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   .blob .script {font-size:16px;}
   .plane {display:none;}
   .l1 {font-size:28px;} .l2 {font-size:40px;} .tagline {font-size:13px;}
-}
-
-/* ---------- Phone and small-tablet layout ---------- */
-@media (max-width: 768px) {
-  html, body, .stApp {max-width:100%; overflow-x:hidden !important;}
-  .block-container {
-    width:100% !important; max-width:100% !important;
-    padding:78px 12px 18px !important;
-  }
-  .hdr {padding:16px 8px 0; margin:0 auto; width:100%;}
-  .title-row {gap:7px; max-width:100%; justify-content:center;}
-  .title-row > svg {width:38px; height:auto; flex:none;}
-  .ttl {min-width:0;}
-  .l1 {font-size:clamp(23px, 6vw, 32px); overflow-wrap:anywhere;}
-  .l2 {font-size:clamp(34px, 9vw, 46px); overflow-wrap:anywhere;}
-  .tagline {font-size:12px; gap:7px; flex-wrap:wrap; line-height:1.4;}
-  .tagline i {width:16px;}
-  .blob {display:none;}
-  .gallery, .charts, .dash {
-    width:100% !important; max-width:100% !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:14px; margin:18px auto 0;
-  }
-  .pic {height:clamp(145px, 42vw, 210px);}
-  .panel {min-width:0; padding:14px 12px; border-radius:15px;}
-  .panel img.chart, .chart {width:100% !important; max-width:100% !important; height:auto !important;}
-  [class*="st-key-card"], [class*="st-key-card_target"] {
-    width:100% !important; max-width:100% !important;
-    margin:18px auto 0 !important; padding:17px 13px 15px !important;
-    box-sizing:border-box !important;
-  }
-  .card-title {font-size:19px; line-height:1.3; text-align:center;}
-  .card-sub {font-size:13px; line-height:1.45;}
-  .sec-title {width:100%; margin:30px auto 0; font-size:21px; line-height:1.3; padding:0 5px;}
-  .qbox {padding:16px 13px; margin-top:18px;}
-  .qtext {font-size:18px;}
-  .clock {gap:7px; padding:0 2px;}
-  .cchip {font-size:12px; padding:6px 11px;}
-  .heatpanel {padding:14px 12px; border-radius:15px;}
-  .heatscroll {max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;}
-  .perfgrid {grid-template-columns:minmax(0,1fr) !important; gap:12px;}
-  .statgrid {grid-template-columns:repeat(2,minmax(0,1fr));}
-  .statlist {min-width:0;}
-  .exam {align-items:flex-start; flex-wrap:wrap;}
-  .topnav {
-    top:8px; left:8px; right:8px; transform:none;
-    width:auto; max-width:none; justify-content:flex-start;
-    gap:2px; padding:5px 7px; border-radius:16px;
-  }
-  .topnav .brand {display:none;}
-  .topnav a {flex:0 0 auto; padding:4px 7px; gap:5px;}
-  .topnav .ni {width:30px; height:30px;}
-  .topnav .nt {display:none;}
-  [data-testid="stHorizontalBlock"] {gap:10px !important;}
-  [data-testid="stDataFrame"], [data-testid="stTable"] {max-width:100%; overflow-x:auto;}
-  .foot {margin-top:34px; padding:30px 12px 24px; font-size:15px;}
-}
-
-@media (max-width: 480px) {
-  .block-container {padding-left:10px !important; padding-right:10px !important;}
-  .l1 {font-size:23px;}
-  .l2 {font-size:35px;}
-  .title-row > svg {width:32px;}
-  .card-title {font-size:17px;}
-  .sec-title {font-size:19px;}
-  .stat b {font-size:18px;}
-  .srow2 {padding:6px 9px;}
-  .slabel {font-size:12px;}
-  .srow2 b {font-size:15px;}
-  .actrow {font-size:12px; gap:7px;}
-  .actdate {font-size:11px;}
 }
 </style>
 """
@@ -1219,19 +1100,6 @@ with st.sidebar:
     st.toggle("🌙 Dark mode", key="dark_mode")
     with st.container(key="pillbtn_logout"):
         st.button("Log out", icon=":material/logout:", on_click=do_logout, key="btn_logout")
-
-# Fixed four-item bottom navigation on phones; the desktop keeps its left sidebar.
-with st.container(key="mobile_nav"):
-    _nav_cols = st.columns(4, gap="small")
-    _nav_icons = {"home": ":material/home:", "planner": ":material/menu_book:",
-                  "predict": ":material/insights:", "insights": ":material/bar_chart:"}
-    for _col, (_nav_key, _nav_label) in zip(_nav_cols, PAGES):
-        with _col:
-            with st.container(key=("mobile_active_" if PAGE == _nav_key else "mobile_inactive_") + _nav_key):
-                st.button(_nav_label, icon=_nav_icons[_nav_key],
-                          on_click=go_page, args=(_nav_key,),
-                          key=f"mobile_btn_{_nav_key}", use_container_width=True,
-                          type="primary" if PAGE == _nav_key else "secondary")
 _m = st.session_state.pop("a_msg", None)
 if _m and _m[0] == "ok":
     st.toast(_m[1], icon="👋")
