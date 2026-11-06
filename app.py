@@ -340,6 +340,77 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   .plane {display:none;}
   .l1 {font-size:28px;} .l2 {font-size:40px;} .tagline {font-size:13px;}
 }
+
+/* ---------- Phone and small-tablet layout ---------- */
+@media (max-width: 768px) {
+  html, body, .stApp {max-width:100%; overflow-x:hidden !important;}
+  .block-container {
+    width:100% !important; max-width:100% !important;
+    padding:78px 12px 18px !important;
+  }
+  .hdr {padding:16px 8px 0; margin:0 auto; width:100%;}
+  .title-row {gap:7px; max-width:100%; justify-content:center;}
+  .title-row > svg {width:38px; height:auto; flex:none;}
+  .ttl {min-width:0;}
+  .l1 {font-size:clamp(23px, 6vw, 32px); overflow-wrap:anywhere;}
+  .l2 {font-size:clamp(34px, 9vw, 46px); overflow-wrap:anywhere;}
+  .tagline {font-size:12px; gap:7px; flex-wrap:wrap; line-height:1.4;}
+  .tagline i {width:16px;}
+  .blob {display:none;}
+  .gallery, .charts, .dash {
+    width:100% !important; max-width:100% !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:14px; margin:18px auto 0;
+  }
+  .pic {height:clamp(145px, 42vw, 210px);}
+  .panel {min-width:0; padding:14px 12px; border-radius:15px;}
+  .panel img.chart, .chart {width:100% !important; max-width:100% !important; height:auto !important;}
+  [class*="st-key-card"], [class*="st-key-card_target"] {
+    width:100% !important; max-width:100% !important;
+    margin:18px auto 0 !important; padding:17px 13px 15px !important;
+    box-sizing:border-box !important;
+  }
+  .card-title {font-size:19px; line-height:1.3; text-align:center;}
+  .card-sub {font-size:13px; line-height:1.45;}
+  .sec-title {width:100%; margin:30px auto 0; font-size:21px; line-height:1.3; padding:0 5px;}
+  .qbox {padding:16px 13px; margin-top:18px;}
+  .qtext {font-size:18px;}
+  .clock {gap:7px; padding:0 2px;}
+  .cchip {font-size:12px; padding:6px 11px;}
+  .heatpanel {padding:14px 12px; border-radius:15px;}
+  .heatscroll {max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  .perfgrid {grid-template-columns:minmax(0,1fr) !important; gap:12px;}
+  .statgrid {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .statlist {min-width:0;}
+  .exam {align-items:flex-start; flex-wrap:wrap;}
+  .topnav {
+    top:8px; left:8px; right:8px; transform:none;
+    width:auto; max-width:none; justify-content:flex-start;
+    gap:2px; padding:5px 7px; border-radius:16px;
+  }
+  .topnav .brand {display:none;}
+  .topnav a {flex:0 0 auto; padding:4px 7px; gap:5px;}
+  .topnav .ni {width:30px; height:30px;}
+  .topnav .nt {display:none;}
+  [data-testid="stHorizontalBlock"] {gap:10px !important;}
+  [data-testid="stDataFrame"], [data-testid="stTable"] {max-width:100%; overflow-x:auto;}
+  .foot {margin-top:34px; padding:30px 12px 24px; font-size:15px;}
+}
+
+@media (max-width: 480px) {
+  .block-container {padding-left:10px !important; padding-right:10px !important;}
+  .l1 {font-size:23px;}
+  .l2 {font-size:35px;}
+  .title-row > svg {width:32px;}
+  .card-title {font-size:17px;}
+  .sec-title {font-size:19px;}
+  .stat b {font-size:18px;}
+  .srow2 {padding:6px 9px;}
+  .slabel {font-size:12px;}
+  .srow2 b {font-size:15px;}
+  .actrow {font-size:12px; gap:7px;}
+  .actdate {font-size:11px;}
+}
 </style>
 """
 
