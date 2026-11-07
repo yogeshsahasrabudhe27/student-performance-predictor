@@ -26,6 +26,8 @@ except Exception:      # on Windows run: pip install tzdata
 # ---------- model: uses regressor.pickle from train.py if present, else built-in numbers ----------
 COEF = {"Hours": 5.185, "Health": 1.509, "Understanding": 2.642}
 INTERCEPT = 2.916
+HAS_AVG_MODEL = False   # becomes True if regressor.pickle was trained with a 4th feature: average marks
+BLEND_W = 0.6           # how much the student's past average counts when no 4-feature model exists (0 to 1)
 if os.path.exists("regressor.pickle"):
     try:
         with open("regressor.pickle", "rb") as f:
@@ -33,6 +35,10 @@ if os.path.exists("regressor.pickle"):
         if len(_m.coef_) == 3:
             COEF = dict(zip(["Hours", "Health", "Understanding"], [float(c) for c in _m.coef_]))
             INTERCEPT = float(_m.intercept_)
+        elif len(_m.coef_) == 4:
+            COEF = dict(zip(["Hours", "Health", "Understanding", "Avg"], [float(c) for c in _m.coef_]))
+            INTERCEPT = float(_m.intercept_)
+            HAS_AVG_MODEL = True
     except Exception:
         pass
 
@@ -342,22 +348,38 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
 .foot {margin-top:60px; background:#14305e; color:#fff; text-align:center; font-size:22px; font-weight:600; letter-spacing:.4px; padding:50px 16px 32px; border-radius:50% 50% 0 0 / 46px 46px 0 0;}
 @media (max-width:720px) {.foot {font-size:16px;}}
 @media (max-width:720px) {
-  .gallery, .charts {grid-template-columns:1fr;}
-  .blob {width:170px; height:120px; padding:14px 10px 0 40px;}
-  .blob .script {font-size:16px;}
+  .gallery, .charts {grid-template-columns:1fr; gap:16px;}
   .plane {display:none;}
-  .l1 {font-size:28px;} .l2 {font-size:40px;} .tagline {font-size:13px;}
+  /* the dark corner becomes a slim banner ABOVE the title, so it can never cover the words */
+  .hdr {padding:0;}
+  .blob {position:relative; top:auto; right:auto; width:100%; box-sizing:border-box; height:auto; padding:12px 16px 15px; border-radius:0 0 28px 28px;}
+  .blob .script {display:inline; font-size:21px; line-height:1.2; transform:none;}
+  .blob .script br, .blob .line, .blob > svg {display:none;}
+  .title-row {display:flex; flex-direction:column; align-items:center; gap:6px; margin-top:18px; padding:0 12px;}
+  .title-row > svg {width:54px; height:42px;}
+  .ttl {text-align:center;}
+  .l1 {font-size:26px;} .l2 {font-size:42px;}
+  .tagline {font-size:13px; line-height:1.45; text-align:center; padding:0 14px; margin-top:10px;}
+  .tagline i {display:none;}
+  .sec-title {font-size:21px; margin-top:32px;}
+  [class*="st-key-card"] {padding:18px 14px 14px;}
+  .card-title {font-size:20px;}
+  .pic .note {font-size:23px;}
+  .pic.right .note {font-size:21px; top:4%;}
 }
 
+[class*="st-key-scrolltop"] {position:absolute; width:0; height:0; margin:0; padding:0; overflow:hidden;}
 /* ---------- phone: nav tab bar + sidebar opener ---------- */
 [class*="st-key-mobnav"] {display:none;}
 @media (max-width:768px) {
-  [data-testid="stHeader"] {display:flex !important; background:transparent !important; height:2.75rem !important;}
+  [data-testid="stHeader"] {display:flex !important; background:transparent !important; height:2.75rem !important; pointer-events:none !important;}
+  [data-testid="stSidebarCollapsedControl"], [data-testid="stSidebarCollapsedControl"] *, [data-testid="stExpandSidebarButton"], [data-testid="stExpandSidebarButton"] * {pointer-events:auto !important;}
+  .block-container, [data-testid="stMainBlockContainer"] {padding-top:50px !important;}
   [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu {display:none !important;}
   [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"], [data-testid="collapsedControl"] {display:flex !important; z-index:10000;}
   [data-testid="stSidebarCollapsedControl"] button, [data-testid="stExpandSidebarButton"] {background:#fff !important; border-radius:999px !important; box-shadow:0 4px 12px rgba(20,48,94,.2);}
 
-  [class*="st-key-mobnav"] {display:block; position:sticky; top:0; z-index:9998; padding:6px 8px; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid #d3e3f7; box-shadow:0 4px 14px rgba(20,48,94,.10);}
+  [class*="st-key-mobnav"] {display:block; position:fixed; top:0; left:0; right:0; width:100%; box-sizing:border-box; z-index:999980; padding:6px 8px; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid #d3e3f7; box-shadow:0 4px 14px rgba(20,48,94,.10);}
   [class*="st-key-mobnav"] [data-testid="stHorizontalBlock"] {flex-direction:row !important; flex-wrap:nowrap !important; gap:6px !important; padding-left:44px;}
   [class*="st-key-mobnav"] [data-testid="stColumn"], [class*="st-key-mobnav"] [data-testid="column"] {min-width:0 !important; width:auto !important; flex:1 1 0 !important;}
   [class*="st-key-mobnav"] [data-testid="stButton"] {width:100% !important; margin:0 !important;}
@@ -383,7 +405,7 @@ NAV_HTML = """
 HEADER = """
 <div class="hdr" id="home">
 <svg class="plane" width="140" height="110" viewBox="0 0 140 110" fill="none" stroke="#14305e" stroke-width="2" stroke-linejoin="round"><path d="M84 8 L52 24 L72 30 L80 50 L90 36 L112 22 Z"/><path d="M72 30 L112 22"/><path d="M60 46 C 48 66, 40 70, 22 70" stroke-dasharray="4 5"/><circle cx="14" cy="66" r="9" stroke-dasharray="3 4"/></svg>
-<div class="blob"><span class="script">Small<br>Steps<br>Big Dreams</span><span class="line"></span><svg width="18" height="16" viewBox="0 0 24 22"><path d="M12 21 C-4 10 4 -2 12 5 C20 -2 28 10 12 21Z" fill="#fff"/></svg></div>
+<div class="blob"><span class="script">Small<br> Steps<br> Big Dreams</span><span class="line"></span><svg width="18" height="16" viewBox="0 0 24 22"><path d="M12 21 C-4 10 4 -2 12 5 C20 -2 28 10 12 21Z" fill="#fff"/></svg></div>
 <div class="title-row">
 <svg width="68" height="52" viewBox="0 0 64 48"><path d="M32 4 L62 18 L32 32 L2 18 Z" fill="#14305e"/><path d="M14 26 V38 C14 43 50 43 50 38 V26 L32 35 Z" fill="#14305e"/><path d="M58 20 V37" stroke="#14305e" stroke-width="3"/></svg>
 <div class="ttl"><span class="l1">__T1__</span><span class="l2">__T2__</span></div>
@@ -395,7 +417,7 @@ HEADER = """
 # Built-in illustrations: shown when there are no photos in the images folder
 LEFT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7e5bd"/><stop offset="1" stop-color="#d9a05c"/></linearGradient></defs><rect width="600" height="230" fill="url(#gl)"/><circle cx="80" cy="20" r="80" fill="#fff7dc" opacity=".55"/><rect y="150" width="600" height="80" fill="#a8672f" opacity=".45"/><path d="M335 124 C318 90 333 62 350 40 C362 72 375 98 335 124Z" fill="#4f9440"/><path d="M342 124 C362 96 390 86 404 76 C398 108 376 122 342 124Z" fill="#7cc062"/><path d="M95 205 L215 172 L225 215 L105 232Z" fill="#fffaf0"/><path d="M215 172 L300 190 L292 228 L225 215Z" fill="#fff1d6"/><path d="M130 200 L200 184 M135 212 L205 197" stroke="#c9b48c" stroke-width="2"/><path d="M180 192 L250 207" stroke="#3b6cf0" stroke-width="5" stroke-linecap="round"/><ellipse cx="335" cy="176" rx="38" ry="9" fill="#fff"/><rect x="313" y="140" width="44" height="34" rx="9" fill="#fff"/><ellipse cx="335" cy="141" rx="20" ry="5" fill="#5a3a22"/><path d="M357 148 C372 148 372 166 356 166" fill="none" stroke="#fff" stroke-width="5"/><rect x="392" y="128" width="34" height="44" rx="5" fill="#f5f0e8"/><path d="M400 128 L396 95" stroke="#e08a2b" stroke-width="4"/><path d="M410 128 L414 92" stroke="#3b6cf0" stroke-width="4"/><path d="M420 128 L430 100" stroke="#c0392b" stroke-width="4"/><rect x="440" y="146" width="140" height="24" fill="#2e2a25"/><rect x="450" y="124" width="124" height="22" fill="#c9a227"/><rect x="446" y="102" width="130" height="22" fill="#3a342d"/><path d="M470 100 L540 92" stroke="#e08a2b" stroke-width="5" stroke-linecap="round"/><rect x="420" y="186" width="62" height="42" rx="5" fill="#d9d9d4"/><rect x="427" y="191" width="48" height="10" fill="#8fb8a0"/><g fill="#777"><circle cx="435" cy="210" r="3"/><circle cx="451" cy="210" r="3"/><circle cx="467" cy="210" r="3"/><circle cx="435" cy="221" r="3"/><circle cx="451" cy="221" r="3"/><circle cx="467" cy="221" r="3"/></g></svg>"""
 
-RIGHT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b3fa0"/><stop offset=".6" stop-color="#3b6cf0"/><stop offset="1" stop-color="#7b5cf0"/></linearGradient></defs><rect width="600" height="230" fill="url(#gr)"/><rect y="172" width="600" height="58" fill="#6f4be0" opacity=".75"/><rect x="18" y="148" width="34" height="30" rx="4" fill="#4fa3e0"/><path d="M35 148 C20 120 25 105 35 95 C45 110 50 130 35 148Z" fill="#3fae5a"/><path d="M35 148 C55 125 70 120 78 118 C72 138 55 146 35 148Z" fill="#66c47a"/><path d="M62 178 C62 128 150 128 150 178Z" fill="#1f2f78"/><circle cx="106" cy="92" r="26" fill="#f1c29a"/><path d="M80 90 C78 62 134 58 132 90 C120 78 98 76 80 90Z" fill="#35251d"/><circle cx="98" cy="94" r="2.5" fill="#222"/><circle cx="114" cy="94" r="2.5" fill="#222"/><path d="M99 104 Q106 110 113 104" fill="none" stroke="#8a4b2a" stroke-width="2"/><path d="M168 172 L184 112 L290 112 L300 172Z" fill="#a9b3cf"/><rect x="150" y="168" width="164" height="10" rx="4" fill="#d5dbea"/><circle cx="156" cy="168" r="9" fill="#f1c29a"/><rect x="205" y="40" width="52" height="52" rx="12" fill="#2a63d8" opacity=".85" stroke="#7fe3ff"/><circle cx="231" cy="66" r="14" fill="none" stroke="#7fe3ff" stroke-width="3"/><path d="M231 52 V80 M217 66 H245" stroke="#7fe3ff" stroke-width="2"/><rect x="275" y="36" width="130" height="90" rx="8" fill="#1d4fc4" stroke="#7fb4ff"/><path d="M288 112 L312 96 L334 102 L362 70 L388 52" fill="none" stroke="#8ef0ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M386 44 L402 50 L392 63Z" fill="#8ef0ff"/><rect x="400" y="182" width="80" height="14" fill="#20a77a"/><rect x="396" y="196" width="88" height="14" fill="#3b8cf0"/><circle cx="440" cy="150" r="30" fill="#ffcf33"/><circle cx="440" cy="150" r="23" fill="#fff"/><path d="M440 150 V134 M440 150 L452 156" stroke="#14305e" stroke-width="3" stroke-linecap="round"/><rect x="512" y="160" width="30" height="34" rx="4" fill="#f5c518"/><path d="M520 160 L516 142 M530 160 L536 138 M538 160 L548 146" stroke="#ff7a59" stroke-width="4" stroke-linecap="round"/></svg>"""
+RIGHT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b3fa0"/><stop offset=".6" stop-color="#3b6cf0"/><stop offset="1" stop-color="#7b5cf0"/></linearGradient></defs><rect width="600" height="230" fill="url(#gr)"/><rect y="172" width="600" height="58" fill="#6f4be0" opacity=".75"/><rect x="18" y="148" width="34" height="30" rx="4" fill="#4fa3e0"/><path d="M35 148 C20 120 25 105 35 95 C45 110 50 130 35 148Z" fill="#3fae5a"/><path d="M35 148 C55 125 70 120 78 118 C72 138 55 146 35 148Z" fill="#66c47a"/><path d="M62 178 C62 128 150 128 150 178Z" fill="#1f2f78"/><circle cx="106" cy="92" r="26" fill="#f1c29a"/><path d="M80 90 C78 62 134 58 132 90 C120 78 98 76 80 90Z" fill="#35251d"/><circle cx="98" cy="94" r="2.5" fill="#222"/><circle cx="114" cy="94" r="2.5" fill="#222"/><path d="M99 104 Q106 110 113 104" fill="none" stroke="#8a4b2a" stroke-width="2"/><path d="M168 172 L184 112 L290 112 L300 172Z" fill="#a9b3cf"/><rect x="150" y="168" width="164" height="10" rx="4" fill="#d5dbea"/><circle cx="156" cy="168" r="9" fill="#f1c29a"/><g transform="translate(0,22)"><rect x="205" y="40" width="52" height="52" rx="12" fill="#2a63d8" opacity=".85" stroke="#7fe3ff"/><circle cx="231" cy="66" r="14" fill="none" stroke="#7fe3ff" stroke-width="3"/><path d="M231 52 V80 M217 66 H245" stroke="#7fe3ff" stroke-width="2"/><rect x="275" y="36" width="130" height="90" rx="8" fill="#1d4fc4" stroke="#7fb4ff"/><path d="M288 112 L312 96 L334 102 L362 70 L388 52" fill="none" stroke="#8ef0ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M386 44 L402 50 L392 63Z" fill="#8ef0ff"/></g><rect x="400" y="182" width="80" height="14" fill="#20a77a"/><rect x="396" y="196" width="88" height="14" fill="#3b8cf0"/><circle cx="440" cy="150" r="30" fill="#ffcf33"/><circle cx="440" cy="150" r="23" fill="#fff"/><path d="M440 150 V134 M440 150 L452 156" stroke="#14305e" stroke-width="3" stroke-linecap="round"/><rect x="512" y="160" width="30" height="34" rx="4" fill="#f5c518"/><path d="M520 160 L516 142 M530 160 L536 138 M538 160 L548 146" stroke="#ff7a59" stroke-width="4" stroke-linecap="round"/></svg>"""
 
 GALLERY = """
 <div class="gallery">
@@ -451,8 +473,16 @@ def load_image(names):
 
 
 # ---------- prediction and charts ----------
-def predict(hours, health, understanding):
+def predict(hours, health, understanding, avg=None):
+    """avg = average marks of previous exams (optional). It anchors the prediction to the student's real ability."""
+    if HAS_AVG_MODEL and avg is None:
+        avg = 60.0                       # a 4-feature model needs a value; use a neutral one
     m = INTERCEPT + COEF["Hours"] * hours + COEF["Health"] * health + COEF["Understanding"] * understanding
+    if avg is not None:
+        if HAS_AVG_MODEL:
+            m += COEF["Avg"] * avg
+        else:
+            m = BLEND_W * avg + (1 - BLEND_W) * m     # blend habits-based estimate with past average
     return float(min(max(m, 0), 100))   # marks stay between 0 and 100
 
 
@@ -467,7 +497,7 @@ def fig_to_img(fig):
     return '<img class="chart" src="data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode() + '">'
 
 
-def sim_chart(hours, health, understanding, marks):
+def sim_chart(hours, health, understanding, marks, avg=None):
     xs = np.linspace(1, 10, 60)
     fig, ax = plt.subplots(figsize=(6, 3.6))
     if os.path.exists("data.csv"):
@@ -476,9 +506,9 @@ def sim_chart(hours, health, understanding, marks):
             ax.scatter(df["Hours"], df["Scores"], s=12, color="#9db4d6", alpha=.55, label="Sample data")
         except Exception:
             pass
-    ax.plot(xs, [predict(x, 10, 10) for x in xs], "--", color="#22a06b", lw=2, label="Best health + understanding")
-    ax.plot(xs, [predict(x, 3, 3) for x in xs], ":", color="#e0752d", lw=2.2, label="Low health + understanding")
-    ax.plot(xs, [predict(x, health, understanding) for x in xs], color="#1447a8", lw=3, label="Your levels")
+    ax.plot(xs, [predict(x, 10, 10, avg) for x in xs], "--", color="#22a06b", lw=2, label="Best health + understanding")
+    ax.plot(xs, [predict(x, 3, 3, avg) for x in xs], ":", color="#e0752d", lw=2.2, label="Low health + understanding")
+    ax.plot(xs, [predict(x, health, understanding, avg) for x in xs], color="#1447a8", lw=3, label="Your levels")
     ax.scatter([min(hours, 10)], [marks], s=150, color="#f5b301", edgecolor=CHART_TXT, zorder=5, label="You")
     ax.set_ylim(0, 105); ax.set_xlabel("Study hours per day"); ax.set_ylabel("Predicted marks")
     ax.legend(fontsize=7, loc="lower right", frameon=False, labelcolor=CHART_TXT)
@@ -490,11 +520,20 @@ def sim_chart(hours, health, understanding, marks):
     return fig_to_img(fig)
 
 
-def contrib_chart(hours, health, understanding):
-    parts = {"Base": INTERCEPT, "Study hours": COEF["Hours"] * hours,
-             "Health": COEF["Health"] * health, "Understanding": COEF["Understanding"] * understanding}
+def contrib_chart(hours, health, understanding, avg=None):
+    k, extra = 1.0, None
+    if avg is not None:
+        if HAS_AVG_MODEL:
+            extra = COEF["Avg"] * avg
+        else:
+            k, extra = 1 - BLEND_W, BLEND_W * avg
+    parts = {"Base": INTERCEPT * k, "Study hours": COEF["Hours"] * hours * k,
+             "Health": COEF["Health"] * health * k, "Understanding": COEF["Understanding"] * understanding * k}
+    if extra is not None:
+        parts["Average marks"] = extra
+    colors = ["#9db4d6", "#f5b301", "#22a06b", "#3b6cf0", "#e0752d"][:len(parts)]
     fig, ax = plt.subplots(figsize=(6, 3.6))
-    bars = ax.barh(list(parts.keys()), list(parts.values()), color=["#9db4d6", "#f5b301", "#22a06b", "#3b6cf0"])
+    bars = ax.barh(list(parts.keys()), list(parts.values()), color=colors)
     ax.bar_label(bars, fmt="%.1f", padding=3, color=CHART_TXT, fontsize=9)
     ax.invert_yaxis(); ax.set_xlabel("Marks contributed")
     for s in ("top", "right"):
@@ -837,7 +876,7 @@ def progress_html(p, res, today):
         lines.append(f"🧪 Mock tests: latest {latest:g}%{trend}, average {sum(vals) / len(vals):.1f}%, "
                      f"best {max(vals):g}% ({len(vals)} test{'s' if len(vals) != 1 else ''}).")
         if res:
-            pm = predict(res[0], res[1], res[2])
+            pm = predict(res[0], res[1], res[2], res[3] if len(res) > 3 else None)
             gap = pm - latest
             if gap > 3:
                 lines.append(f"Your predicted marks ({pm:.1f}%) are higher than your latest mock test. Revise weak topics to close the gap.")
@@ -1055,7 +1094,7 @@ QUOTE_SECONDS = 8   # a new quote appears automatically every 8 seconds
 def rotating_quote():
     res_now = st.session_state.get("res")
     if res_now:
-        m = predict(res_now[0], res_now[1], res_now[2])
+        m = predict(res_now[0], res_now[1], res_now[2], res_now[3] if len(res_now) > 3 else None)
         tier = "low" if m < 50 else "mid" if m < 75 else "high"
     else:
         tier = "general"
@@ -1111,6 +1150,7 @@ if PAGE not in dict(PAGES):
 
 def go_page(p):
     st.session_state["page"] = p
+    st.session_state["_to_top"] = True
 
 
 BRAND_SVG = '<svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c3 2.6 9 2.6 12 0v-4.5"/><path d="M22 9v5"/></svg>'
@@ -1267,12 +1307,15 @@ elif PAGE == "predict":
             st.markdown('<div class="lbl">Health level (1 = poor, 10 = excellent)</div>', unsafe_allow_html=True)
             health = st.number_input("Health level", min_value=1, max_value=10, value=None, step=1,
                                      placeholder="Enter health level (1 - 10)", label_visibility="collapsed")
+            st.markdown('<div class="lbl">Average marks of previous exams (optional, 0 - 100)</div>', unsafe_allow_html=True)
+            avg_in = st.number_input("Average marks", min_value=0.0, max_value=100.0, value=None, step=0.5,
+                                     placeholder="Example: 85  (improves accuracy)", label_visibility="collapsed")
 
             if st.button("Predict Marks", icon=":material/show_chart:"):
                 if hours is None or understand is None or health is None:
                     st.session_state["err"], st.session_state["res"] = True, None
                 else:
-                    st.session_state["err"], st.session_state["res"] = False, (hours, health, understand)
+                    st.session_state["err"], st.session_state["res"] = False, (hours, health, understand, avg_in)
 
             if st.session_state.get("err"):
                 st.markdown('<div class="err"><b>!</b>Fill all three boxes: hours 0 to 24, understanding 1 to 10, health 1 to 10</div>',
@@ -1280,14 +1323,18 @@ elif PAGE == "predict":
 
             res = st.session_state.get("res")
             if res:
-                h, hl, u = res
-                marks = predict(h, hl, u)
+                h, hl, u, av = res
+                marks = predict(h, hl, u, av)
                 st.markdown(f'<div class="result">✦ Predicted Marks: {marks:.1f}</div>', unsafe_allow_html=True)
                 st.markdown(f'<div class="tags">Study {h:g} h &nbsp;•&nbsp; Understanding: {level(u, ("Low", "Medium", "High"))} ({u}/10)'
-                            f' &nbsp;•&nbsp; Health: {level(hl, ("Poor", "Fair", "Good"))} ({hl}/10)</div>', unsafe_allow_html=True)
-                ideas = [("+1 study hour", predict(min(h + 1, 24), hl, u) - marks),
-                         ("Understanding to 10", predict(h, hl, 10) - marks),
-                         ("Health to 10", predict(h, 10, u) - marks)]
+                            f' &nbsp;•&nbsp; Health: {level(hl, ("Poor", "Fair", "Good"))} ({hl}/10)'
+                            + (f' &nbsp;•&nbsp; Past average: {av:g}%' if av is not None else '') + '</div>', unsafe_allow_html=True)
+                if av is None:
+                    st.markdown('<div class="hint">Add your average marks from previous exams for a more accurate prediction.</div>',
+                                unsafe_allow_html=True)
+                ideas = [("+1 study hour", predict(min(h + 1, 24), hl, u, av) - marks),
+                         ("Understanding to 10", predict(h, hl, 10, av) - marks),
+                         ("Health to 10", predict(h, 10, u, av) - marks)]
                 chips = "".join(f'<span class="chip">{n}: +{g:.1f} marks</span>' for n, g in ideas if g > 0.05)
                 if chips:
                     st.markdown(f'<div class="chips">{chips}</div>', unsafe_allow_html=True)
@@ -1297,11 +1344,11 @@ elif PAGE == "predict":
 
     res = st.session_state.get("res")
     if res:
-        h, hl, u = res
+        h, hl, u, av = res
         st.markdown(
             '<div class="charts">'
-            '<div class="panel"><h3>📈 What-if simulation</h3>' + sim_chart(h, hl, u, predict(h, hl, u)) + '</div>'
-            '<div class="panel"><h3>🧩 What drives your marks</h3>' + contrib_chart(h, hl, u) + '</div>'
+            '<div class="panel"><h3>📈 What-if simulation</h3>' + sim_chart(h, hl, u, predict(h, hl, u, av), av) + '</div>'
+            '<div class="panel"><h3>🧩 What drives your marks</h3>' + contrib_chart(h, hl, u, av) + '</div>'
             '</div>', unsafe_allow_html=True)
 
 
@@ -1326,3 +1373,18 @@ elif PAGE == "insights":
 
 
 st.markdown('<div class="foot">🎓 Study Smart | Work Hard | Achieve More</div>', unsafe_allow_html=True)
+
+# after tapping a tab, jump back to the top of the new page
+if st.session_state.pop("_to_top", False):
+    _JS = ("<script>try{var d=window.parent.document;"
+           "var m=d.querySelector('section[data-testid=stMain]')||d.querySelector('[data-testid=stMain]')||d.querySelector('section.main');"
+           "if(m){m.scrollTo(0,0);}window.parent.scrollTo(0,0);}catch(e){}</script>")
+    with st.container(key="scrolltop"):
+        try:
+            if hasattr(st, "iframe"):
+                st.iframe(_JS, height=1)              # new Streamlit
+            else:
+                import streamlit.components.v1 as _components
+                _components.html(_JS, height=0)       # older Streamlit
+        except Exception:
+            pass
