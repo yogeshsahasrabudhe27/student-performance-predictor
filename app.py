@@ -519,7 +519,7 @@ def _photo_ratio(name):
 
 
 @st.cache_data
-def load_image(names, ratio=None):
+def load_image(names, ratio=None, stamp=None):   # 'stamp' = file date, so a replaced picture is reloaded
     """Return the photo in a box of fixed shape (same for both pictures); the photo is never cropped."""
     for name in names:
         if os.path.exists(name):
@@ -1160,8 +1160,15 @@ if _left_file is None and _spare:
 if _right_file is None and _spare:
     _right_file = _spare.pop(0)
 _ratio = _photo_ratio(_left_file or _right_file) if (_left_file or _right_file) else None   # both boxes copy the first picture's shape
-left_img = load_image((_left_file,), _ratio) if _left_file else ""
-right_img = load_image((_right_file,), _ratio) if _right_file else ""
+def _stamp(f):
+    try:
+        return int(os.path.getmtime(f)), os.path.getsize(f)
+    except Exception:
+        return None
+
+
+left_img = load_image((_left_file,), _ratio, _stamp(_left_file)) if _left_file else ""
+right_img = load_image((_right_file,), _ratio, _stamp(_right_file)) if _right_file else ""
 
 st.markdown(CSS, unsafe_allow_html=True)
 DARK_MODE = bool(st.session_state.get("dark_mode", False))
