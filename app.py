@@ -120,7 +120,7 @@ div[role="dialog"] {background:#1E293B !important;} div[role="dialog"] h2, div[r
 
 CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Caveat:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Caveat:wght@600;700&display=swap');
 [data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu, footer {display:none !important;}
 .stApp {background:linear-gradient(180deg,#e6f1fd,#d8e8fa);}
 .stApp, .stApp input, .stApp button {font-family:'Poppins',sans-serif;}
@@ -365,8 +365,13 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   .sec-title {font-size:21px; margin-top:32px;}
   [class*="st-key-card"] {padding:18px 14px 14px;}
   .card-title {font-size:20px;}
-  .pic .note {font-size:19px;}
-  .pic.right .note {font-size:17px; top:4%;}
+  /* show the WHOLE picture (no cropping); the handwriting sits in a caption band above it */
+  .pic {display:flex; flex-direction:column; height:auto; container-type:inline-size;}
+  .pic .art, .pic img {order:2; height:auto; aspect-ratio:600/230;}
+  .pic.left .note, .pic.right .note {position:static; order:1; transform:none; width:100%; box-sizing:border-box; margin:0; border-radius:0; box-shadow:none; text-shadow:none; text-align:center; white-space:nowrap; padding:10px 8px 8px; font-size:17px; font-size:5.4cqw; font-weight:700; line-height:1.2;}
+  .pic.left .note {background:#f7e5bd; color:#14305e;}
+  .pic.right .note {background:#1b3fa0; color:#fff;}
+  .pic .note br {display:none;}
 }
 
 [class*="st-key-scrolltop"] {position:absolute; width:0; height:0; margin:0; padding:0; overflow:hidden;}
@@ -422,8 +427,8 @@ RIGHT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidY
 
 GALLERY = """
 <div class="gallery">
-<div class="pic left">__LEFT__<span class="note script">Plan<br>Study<br>Achieve</span></div>
-<div class="pic right">__RIGHT__<span class="note script">Better Study<br>Bigger Results</span></div>
+<div class="pic left">__LEFT__<span class="note script">Plan<br> Study<br> Achieve</span></div>
+<div class="pic right">__RIGHT__<span class="note script">Better Study<br> Bigger Results</span></div>
 </div>
 """
 
