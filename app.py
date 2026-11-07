@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 TITLE_LINE1 = "Student Performance"   # small dark line
 TITLE_LINE2 = "Predictor"             # big blue italic line
 PREDICT_TITLE = "📊 Academic Performance Insights"   # heading above the prediction card
+SHOW_TEXT_ON_PHOTOS = False   # True = also write "Plan Study Achieve" etc. on top of your own photos
 
 st.set_page_config(page_title=f"{TITLE_LINE1} {TITLE_LINE2}", page_icon="🎓", layout="wide", initial_sidebar_state="expanded")
 
@@ -141,6 +142,7 @@ CSS = """
 .gallery, .charts {display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1160px,92%); margin:26px auto 0;}
 .pic {position:relative; height:230px; border-radius:14px; overflow:hidden; box-shadow:0 8px 22px rgba(20,48,94,.22);}
 .pic img, .pic .art {width:100%; height:100%; object-fit:cover; display:block;}
+.pic.photo .note {display:none !important;}
 .pic .note {position:absolute; font-size:22px; line-height:1.25; padding:7px 14px; border-radius:14px;}
 .pic.left .note {left:5%; top:14%; color:#14305e; background:rgba(255,255,255,.66); box-shadow:0 4px 14px rgba(20,48,94,.15);}
 .pic.right .note {right:4%; top:4%; font-size:19px; line-height:1.25; padding:6px 12px; text-align:right; color:#fff; background:rgba(12,32,80,.5); text-shadow:0 1px 3px rgba(0,0,0,.45);}
@@ -1134,6 +1136,11 @@ def login_dialog():
 
 HERO = HEADER.replace("__T1__", TITLE_LINE1).replace("__T2__", TITLE_LINE2)
 GALLERY_HTML = GALLERY.replace("__LEFT__", left_img or LEFT_ART).replace("__RIGHT__", right_img or RIGHT_ART)
+# your own photos already contain their own text, so the overlay text is hidden for them
+if left_img and not SHOW_TEXT_ON_PHOTOS:
+    GALLERY_HTML = GALLERY_HTML.replace('class="pic left"', 'class="pic left photo"')
+if right_img and not SHOW_TEXT_ON_PHOTOS:
+    GALLERY_HTML = GALLERY_HTML.replace('class="pic right"', 'class="pic right photo"')
 
 if not st.session_state.get("user"):
     st.markdown(HERO, unsafe_allow_html=True)
