@@ -1,8 +1,7 @@
-__pycache__/
-*.pyc
+*.zip
+*.exe
+dist/
+build/
 .venv/
-progress.json
-backup/
-.DS_Store
+.venv313/
 user_data/
-*.imported

@@ -140,8 +140,12 @@ CSS = """
 .tagline {margin-top:12px; font-size:18px; color:#1c2b4a; display:flex; align-items:center; justify-content:center; gap:14px;}
 .tagline i {width:28px; height:2px; background:#14305e; display:block;}
 .gallery, .charts {display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1160px,92%); margin:26px auto 0;}
-.pic {position:relative; height:230px; border-radius:14px; overflow:hidden; box-shadow:0 8px 22px rgba(20,48,94,.22);}
-.pic img, .pic .art {width:100%; height:100%; object-fit:cover; display:block;}
+.gallery {align-items:start;}
+.pic {position:relative; border-radius:14px; overflow:hidden; box-shadow:0 8px 22px rgba(20,48,94,.22);}
+.pic img {display:block; width:100%; height:auto;}   /* your photo is shown WHOLE: never cropped, text inside it stays visible */
+.pic .phwrap {display:flex; align-items:center; justify-content:center; width:100%; background-size:cover; background-position:center;}
+.pic .phwrap img {display:block; width:100%; height:100%; object-fit:contain;}
+.pic .art {display:block; width:100%; height:auto; aspect-ratio:600/230;}
 .pic.photo .note {display:none !important;}
 .pic .note {position:absolute; font-size:22px; line-height:1.25; padding:7px 14px; border-radius:14px;}
 .pic.left .note {left:5%; top:14%; color:#14305e; background:rgba(255,255,255,.66); box-shadow:0 4px 14px rgba(20,48,94,.15);}
@@ -369,7 +373,7 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   .card-title {font-size:20px;}
   /* show the WHOLE picture (no cropping); the handwriting sits in a caption band above it */
   .pic {display:flex; flex-direction:column; height:auto; container-type:inline-size;}
-  .pic .art, .pic img {order:2; height:auto; aspect-ratio:600/230;}
+  .pic .art, .pic img {order:2;}
   .pic.left .note, .pic.right .note {position:static; order:1; transform:none; width:100%; box-sizing:border-box; margin:0; border-radius:0; box-shadow:none; text-shadow:none; text-align:center; white-space:nowrap; padding:10px 8px 8px; font-size:17px; font-size:5.4cqw; font-weight:700; line-height:1.2;}
   .pic.left .note {background:#f7e5bd; color:#14305e;}
   .pic.right .note {background:#1b3fa0; color:#fff;}
@@ -469,14 +473,61 @@ QUOTES = {
 }
 
 
+def _encode_photo(name):
+    """Shrink big photos (phones load them faster) and return (mime, base64 text)."""
+    try:
+        from PIL import Image
+        im = Image.open(name)
+        if im.width > 1400:
+            im = im.resize((1400, max(1, round(im.height * 1400 / im.width))), Image.LANCZOS)
+        if im.mode in ("RGBA", "LA", "P"):
+            im = im.convert("RGBA")
+            bg = Image.new("RGB", im.size, (255, 255, 255))
+            bg.paste(im, mask=im.split()[-1])
+            im = bg
+        else:
+            im = im.convert("RGB")
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=86, optimize=True)
+        return "image/jpeg", base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        low = name.lower()
+        mime = "image/png" if low.endswith(".png") else "image/webp" if low.endswith(".webp") else "image/jpeg"
+        return mime, base64.b64encode(open(name, "rb").read()).decode()
+
+
+def _thumb(name):
+    """Tiny blurred copy of the photo, used to fill any empty space around it."""
+    try:
+        from PIL import Image
+        im = Image.open(name).convert("RGB")
+        im.thumbnail((40, 40))
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=70)
+        return base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        return ""
+
+
+def _photo_ratio(name):
+    try:
+        from PIL import Image
+        with Image.open(name) as im:
+            return round(im.width / im.height, 4)
+    except Exception:
+        return None
+
+
 @st.cache_data
-def load_image(names):
-    """Return an <img> tag for the first existing photo in names, else empty text."""
+def load_image(names, ratio=None):
+    """Return the photo in a box of fixed shape (same for both pictures); the photo is never cropped."""
     for name in names:
         if os.path.exists(name):
-            mime = "image/png" if name.lower().endswith(".png") else "image/jpeg"
-            data = base64.b64encode(open(name, "rb").read()).decode()
-            return f'<img src="data:{mime};base64,{data}" alt="">'
+            mime, data = _encode_photo(name)
+            thumb = _thumb(name)
+            bg = f"background-image:url(data:image/jpeg;base64,{thumb});" if thumb else ""
+            ar = f"aspect-ratio:{ratio};" if ratio else ""
+            return f'<div class="phwrap" style="{ar}{bg}"><img src="data:{mime};base64,{data}" alt=""></div>'
     return ""
 
 
@@ -1086,8 +1137,31 @@ def recent_html(p):
 
 
 # ---------- page ----------
-left_img = load_image(("images/study-desk.jpg", "images/study-desk.jpeg", "images/study-desk.png"))
-right_img = load_image(("images/student-laptop.jpg", "images/student-laptop.jpeg", "images/student-laptop.png"))
+def _photo_files():
+    """Every picture inside the images folder (or the old 'image' folder), in name order."""
+    found = []
+    for folder in ("images", "image"):
+        if os.path.isdir(folder):
+            for f in sorted(os.listdir(folder)):
+                if f.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+                    found.append(os.path.join(folder, f).replace("\\", "/"))
+    return found
+
+
+_PHOTOS = _photo_files()
+_EXTS = (".jpg", ".jpeg", ".png", ".webp")
+_LEFT_NAMES = tuple(f"{d}/study-desk{e}" for d in ("images", "image") for e in _EXTS)
+_RIGHT_NAMES = tuple(f"{d}/student-laptop{e}" for d in ("images", "image") for e in _EXTS)
+_left_file = next((n for n in _LEFT_NAMES if os.path.exists(n)), None)
+_right_file = next((n for n in _RIGHT_NAMES if os.path.exists(n)), None)
+_spare = [f for f in _PHOTOS if f not in (_left_file, _right_file)]   # pictures with any other name
+if _left_file is None and _spare:
+    _left_file = _spare.pop(0)
+if _right_file is None and _spare:
+    _right_file = _spare.pop(0)
+_ratio = _photo_ratio(_left_file or _right_file) if (_left_file or _right_file) else None   # both boxes copy the first picture's shape
+left_img = load_image((_left_file,), _ratio) if _left_file else ""
+right_img = load_image((_right_file,), _ratio) if _right_file else ""
 
 st.markdown(CSS, unsafe_allow_html=True)
 DARK_MODE = bool(st.session_state.get("dark_mode", False))
