@@ -125,11 +125,12 @@ CSS = """
 .stApp {background:linear-gradient(180deg,#e6f1fd,#d8e8fa);}
 .stApp, .stApp input, .stApp button {font-family:'Poppins',sans-serif;}
 .block-container {padding:0 !important; max-width:100% !important;}
-.script {font-family:'Caveat','Segoe Script',cursive; font-weight:600;}
+/* clear, bold font for the text written on the pictures and the dark banner (change it here) */
+.script {font-family:'Poppins',sans-serif; font-weight:700; font-style:italic; letter-spacing:.2px;}
 .hdr {position:relative; text-align:center; padding:24px 16px 0;}
 .plane {position:absolute; top:90px; left:30px;}
 .blob {position:absolute; top:0; right:0; width:270px; height:180px; background:#14305e; border-bottom-left-radius:100% 100%; color:#fff; text-align:center; padding:28px 18px 0 70px;}
-.blob .script {font-size:25px; line-height:1.15; display:block; transform:rotate(-6deg);}
+.blob .script {font-size:21px; line-height:1.25; display:block;}
 .blob .line {display:block; height:3px; width:90px; background:#5aa2ff; border-radius:3px; margin:6px auto 4px;}
 .title-row {display:inline-flex; align-items:center; gap:12px;}
 .ttl {text-align:left; line-height:1;}
@@ -140,9 +141,9 @@ CSS = """
 .gallery, .charts {display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1160px,92%); margin:26px auto 0;}
 .pic {position:relative; height:230px; border-radius:14px; overflow:hidden; box-shadow:0 8px 22px rgba(20,48,94,.22);}
 .pic img, .pic .art {width:100%; height:100%; object-fit:cover; display:block;}
-.pic .note {position:absolute; font-size:27px; line-height:1.1;}
-.pic.left .note {left:7%; top:20%; color:#14305e; transform:rotate(-6deg);}
-.pic.right .note {right:4%; top:5%; font-size:25px; text-align:right; color:#fff; transform:rotate(-5deg); text-shadow:0 1px 6px rgba(0,0,0,.25);}
+.pic .note {position:absolute; font-size:22px; line-height:1.25; padding:7px 14px; border-radius:14px;}
+.pic.left .note {left:5%; top:14%; color:#14305e; background:rgba(255,255,255,.66); box-shadow:0 4px 14px rgba(20,48,94,.15);}
+.pic.right .note {right:4%; top:4%; font-size:19px; line-height:1.25; padding:6px 12px; text-align:right; color:#fff; background:rgba(12,32,80,.5); text-shadow:0 1px 3px rgba(0,0,0,.45);}
 .panel {background:rgba(255,255,255,.82); border:1px solid #d3e3f7; border-radius:18px; padding:16px 18px; box-shadow:0 10px 30px rgba(20,48,94,.12);}
 .panel h3 {margin:0 0 6px; font-size:17px; color:#14305e;}
 .panel img.chart {width:100%; display:block;}
@@ -353,7 +354,7 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   /* the dark corner becomes a slim banner ABOVE the title, so it can never cover the words */
   .hdr {padding:0;}
   .blob {position:relative; top:auto; right:auto; width:100%; box-sizing:border-box; height:auto; padding:12px 16px 15px; border-radius:0 0 28px 28px;}
-  .blob .script {display:inline; font-size:21px; line-height:1.2; transform:none;}
+  .blob .script {display:inline; font-size:17px; line-height:1.2;}
   .blob .script br, .blob .line, .blob > svg {display:none;}
   .title-row {display:flex; flex-direction:column; align-items:center; gap:6px; margin-top:18px; padding:0 12px;}
   .title-row > svg {width:54px; height:42px;}
@@ -364,8 +365,8 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   .sec-title {font-size:21px; margin-top:32px;}
   [class*="st-key-card"] {padding:18px 14px 14px;}
   .card-title {font-size:20px;}
-  .pic .note {font-size:23px;}
-  .pic.right .note {font-size:21px; top:4%;}
+  .pic .note {font-size:19px;}
+  .pic.right .note {font-size:17px; top:4%;}
 }
 
 [class*="st-key-scrolltop"] {position:absolute; width:0; height:0; margin:0; padding:0; overflow:hidden;}
@@ -417,7 +418,7 @@ HEADER = """
 # Built-in illustrations: shown when there are no photos in the images folder
 LEFT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7e5bd"/><stop offset="1" stop-color="#d9a05c"/></linearGradient></defs><rect width="600" height="230" fill="url(#gl)"/><circle cx="80" cy="20" r="80" fill="#fff7dc" opacity=".55"/><rect y="150" width="600" height="80" fill="#a8672f" opacity=".45"/><path d="M335 124 C318 90 333 62 350 40 C362 72 375 98 335 124Z" fill="#4f9440"/><path d="M342 124 C362 96 390 86 404 76 C398 108 376 122 342 124Z" fill="#7cc062"/><path d="M95 205 L215 172 L225 215 L105 232Z" fill="#fffaf0"/><path d="M215 172 L300 190 L292 228 L225 215Z" fill="#fff1d6"/><path d="M130 200 L200 184 M135 212 L205 197" stroke="#c9b48c" stroke-width="2"/><path d="M180 192 L250 207" stroke="#3b6cf0" stroke-width="5" stroke-linecap="round"/><ellipse cx="335" cy="176" rx="38" ry="9" fill="#fff"/><rect x="313" y="140" width="44" height="34" rx="9" fill="#fff"/><ellipse cx="335" cy="141" rx="20" ry="5" fill="#5a3a22"/><path d="M357 148 C372 148 372 166 356 166" fill="none" stroke="#fff" stroke-width="5"/><rect x="392" y="128" width="34" height="44" rx="5" fill="#f5f0e8"/><path d="M400 128 L396 95" stroke="#e08a2b" stroke-width="4"/><path d="M410 128 L414 92" stroke="#3b6cf0" stroke-width="4"/><path d="M420 128 L430 100" stroke="#c0392b" stroke-width="4"/><rect x="440" y="146" width="140" height="24" fill="#2e2a25"/><rect x="450" y="124" width="124" height="22" fill="#c9a227"/><rect x="446" y="102" width="130" height="22" fill="#3a342d"/><path d="M470 100 L540 92" stroke="#e08a2b" stroke-width="5" stroke-linecap="round"/><rect x="420" y="186" width="62" height="42" rx="5" fill="#d9d9d4"/><rect x="427" y="191" width="48" height="10" fill="#8fb8a0"/><g fill="#777"><circle cx="435" cy="210" r="3"/><circle cx="451" cy="210" r="3"/><circle cx="467" cy="210" r="3"/><circle cx="435" cy="221" r="3"/><circle cx="451" cy="221" r="3"/><circle cx="467" cy="221" r="3"/></g></svg>"""
 
-RIGHT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b3fa0"/><stop offset=".6" stop-color="#3b6cf0"/><stop offset="1" stop-color="#7b5cf0"/></linearGradient></defs><rect width="600" height="230" fill="url(#gr)"/><rect y="172" width="600" height="58" fill="#6f4be0" opacity=".75"/><rect x="18" y="148" width="34" height="30" rx="4" fill="#4fa3e0"/><path d="M35 148 C20 120 25 105 35 95 C45 110 50 130 35 148Z" fill="#3fae5a"/><path d="M35 148 C55 125 70 120 78 118 C72 138 55 146 35 148Z" fill="#66c47a"/><path d="M62 178 C62 128 150 128 150 178Z" fill="#1f2f78"/><circle cx="106" cy="92" r="26" fill="#f1c29a"/><path d="M80 90 C78 62 134 58 132 90 C120 78 98 76 80 90Z" fill="#35251d"/><circle cx="98" cy="94" r="2.5" fill="#222"/><circle cx="114" cy="94" r="2.5" fill="#222"/><path d="M99 104 Q106 110 113 104" fill="none" stroke="#8a4b2a" stroke-width="2"/><path d="M168 172 L184 112 L290 112 L300 172Z" fill="#a9b3cf"/><rect x="150" y="168" width="164" height="10" rx="4" fill="#d5dbea"/><circle cx="156" cy="168" r="9" fill="#f1c29a"/><g transform="translate(0,22)"><rect x="205" y="40" width="52" height="52" rx="12" fill="#2a63d8" opacity=".85" stroke="#7fe3ff"/><circle cx="231" cy="66" r="14" fill="none" stroke="#7fe3ff" stroke-width="3"/><path d="M231 52 V80 M217 66 H245" stroke="#7fe3ff" stroke-width="2"/><rect x="275" y="36" width="130" height="90" rx="8" fill="#1d4fc4" stroke="#7fb4ff"/><path d="M288 112 L312 96 L334 102 L362 70 L388 52" fill="none" stroke="#8ef0ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M386 44 L402 50 L392 63Z" fill="#8ef0ff"/></g><rect x="400" y="182" width="80" height="14" fill="#20a77a"/><rect x="396" y="196" width="88" height="14" fill="#3b8cf0"/><circle cx="440" cy="150" r="30" fill="#ffcf33"/><circle cx="440" cy="150" r="23" fill="#fff"/><path d="M440 150 V134 M440 150 L452 156" stroke="#14305e" stroke-width="3" stroke-linecap="round"/><rect x="512" y="160" width="30" height="34" rx="4" fill="#f5c518"/><path d="M520 160 L516 142 M530 160 L536 138 M538 160 L548 146" stroke="#ff7a59" stroke-width="4" stroke-linecap="round"/></svg>"""
+RIGHT_ART = """<svg class="art" viewBox="0 0 600 230" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b3fa0"/><stop offset=".6" stop-color="#3b6cf0"/><stop offset="1" stop-color="#7b5cf0"/></linearGradient></defs><rect width="600" height="230" fill="url(#gr)"/><rect y="172" width="600" height="58" fill="#6f4be0" opacity=".75"/><rect x="18" y="148" width="34" height="30" rx="4" fill="#4fa3e0"/><path d="M35 148 C20 120 25 105 35 95 C45 110 50 130 35 148Z" fill="#3fae5a"/><path d="M35 148 C55 125 70 120 78 118 C72 138 55 146 35 148Z" fill="#66c47a"/><path d="M62 178 C62 128 150 128 150 178Z" fill="#1f2f78"/><circle cx="106" cy="92" r="26" fill="#f1c29a"/><path d="M80 90 C78 62 134 58 132 90 C120 78 98 76 80 90Z" fill="#35251d"/><circle cx="98" cy="94" r="2.5" fill="#222"/><circle cx="114" cy="94" r="2.5" fill="#222"/><path d="M99 104 Q106 110 113 104" fill="none" stroke="#8a4b2a" stroke-width="2"/><path d="M168 172 L184 112 L290 112 L300 172Z" fill="#a9b3cf"/><rect x="150" y="168" width="164" height="10" rx="4" fill="#d5dbea"/><circle cx="156" cy="168" r="9" fill="#f1c29a"/><g transform="translate(0,36)"><rect x="205" y="40" width="52" height="52" rx="12" fill="#2a63d8" opacity=".85" stroke="#7fe3ff"/><circle cx="231" cy="66" r="14" fill="none" stroke="#7fe3ff" stroke-width="3"/><path d="M231 52 V80 M217 66 H245" stroke="#7fe3ff" stroke-width="2"/><rect x="275" y="36" width="130" height="90" rx="8" fill="#1d4fc4" stroke="#7fb4ff"/><path d="M288 112 L312 96 L334 102 L362 70 L388 52" fill="none" stroke="#8ef0ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M386 44 L402 50 L392 63Z" fill="#8ef0ff"/></g><rect x="400" y="182" width="80" height="14" fill="#20a77a"/><rect x="396" y="196" width="88" height="14" fill="#3b8cf0"/><circle cx="440" cy="150" r="30" fill="#ffcf33"/><circle cx="440" cy="150" r="23" fill="#fff"/><path d="M440 150 V134 M440 150 L452 156" stroke="#14305e" stroke-width="3" stroke-linecap="round"/><rect x="512" y="160" width="30" height="34" rx="4" fill="#f5c518"/><path d="M520 160 L516 142 M530 160 L536 138 M538 160 L548 146" stroke="#ff7a59" stroke-width="4" stroke-linecap="round"/></svg>"""
 
 GALLERY = """
 <div class="gallery">
