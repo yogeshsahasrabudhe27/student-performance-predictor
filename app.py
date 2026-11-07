@@ -100,7 +100,15 @@ div[role="dialog"] {background:#1E293B !important;} div[role="dialog"] h2, div[r
 .acct-hi {color:#F8FAFC !important;} .acct-hi small, .acct-note {color:#94A3B8 !important;}
 .stat, .stat.mock {background:#101827 !important; border-color:#334155 !important;} .stat b {color:#F8FAFC !important;} .stat small {color:#94A3B8 !important;}
 .actscroll {scrollbar-color:#475569 #1E293B;} .actscroll::-webkit-scrollbar-track {background:#1E293B;} .actscroll::-webkit-scrollbar-thumb {background:#475569;}
-
+/* phone: dark nav tab bar */
+@media (max-width:768px) {
+  [class*="st-key-mobnav"] {background:rgba(30,41,59,.95) !important; border-bottom-color:#334155 !important;}
+  [class*="st-key-mobnav"] button {background:#101827 !important; color:#F8FAFC !important;}
+  [class*="st-key-mobnav"] button p {color:#F8FAFC !important;}
+  [class*="st-key-mobnav"] button[data-testid="stBaseButton-primary"] {background:#60A5FA !important; color:#101827 !important;}
+  [class*="st-key-mobnav"] button[data-testid="stBaseButton-primary"] p {color:#101827 !important;}
+  [data-testid="stSidebarCollapsedControl"] button, [data-testid="stExpandSidebarButton"] {background:#1E293B !important; color:#F8FAFC !important;}
+}
 </style>
 """
 
@@ -339,6 +347,23 @@ div[role="dialog"] h2, [data-testid="stDialog"] h2, [data-baseweb="modal"] h2 {c
   .blob .script {font-size:16px;}
   .plane {display:none;}
   .l1 {font-size:28px;} .l2 {font-size:40px;} .tagline {font-size:13px;}
+}
+
+/* ---------- phone: nav tab bar + sidebar opener ---------- */
+[class*="st-key-mobnav"] {display:none;}
+@media (max-width:768px) {
+  [data-testid="stHeader"] {display:flex !important; background:transparent !important; height:2.75rem !important;}
+  [data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu {display:none !important;}
+  [data-testid="stSidebarCollapsedControl"], [data-testid="stExpandSidebarButton"], [data-testid="collapsedControl"] {display:flex !important; z-index:10000;}
+  [data-testid="stSidebarCollapsedControl"] button, [data-testid="stExpandSidebarButton"] {background:#fff !important; border-radius:999px !important; box-shadow:0 4px 12px rgba(20,48,94,.2);}
+
+  [class*="st-key-mobnav"] {display:block; position:sticky; top:0; z-index:9998; padding:6px 8px; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-bottom:1px solid #d3e3f7; box-shadow:0 4px 14px rgba(20,48,94,.10);}
+  [class*="st-key-mobnav"] [data-testid="stHorizontalBlock"] {flex-direction:row !important; flex-wrap:nowrap !important; gap:6px !important; padding-left:44px;}
+  [class*="st-key-mobnav"] [data-testid="stColumn"], [class*="st-key-mobnav"] [data-testid="column"] {min-width:0 !important; width:auto !important; flex:1 1 0 !important;}
+  [class*="st-key-mobnav"] [data-testid="stButton"] {width:100% !important; margin:0 !important;}
+  [class*="st-key-mobnav"] button {width:100%; height:38px; min-height:38px; padding:0 4px; border-radius:999px !important; border:0 !important; background:#e8f1ff !important; color:#14305e !important; font-weight:700;}
+  [class*="st-key-mobnav"] button p {color:inherit !important; font-size:12.5px; margin:0 !important; white-space:nowrap;}
+  [class*="st-key-mobnav"] button[data-testid="stBaseButton-primary"] {background:linear-gradient(135deg,#14305e,#1f5fd1) !important; color:#fff !important;}
 }
 </style>
 """
@@ -1103,6 +1128,14 @@ with st.sidebar:
 _m = st.session_state.pop("a_msg", None)
 if _m and _m[0] == "ok":
     st.toast(_m[1], icon="👋")
+
+# ---------- phone navigation bar (shown only on small screens via CSS) ----------
+with st.container(key="mobnav"):
+    _mcols = st.columns(len(PAGES), gap="small")
+    for _col, (_key, _label) in zip(_mcols, PAGES):
+        with _col:
+            st.button(_label, on_click=go_page, args=(_key,), key=f"btn_mnav_{_key}",
+                      type="primary" if PAGE == _key else "secondary", use_container_width=True)
 
 _prog = load_progress()
 _today = today_date()
