@@ -1,0 +1,24 @@
+name: Check Predictor
+
+on: push
+
+jobs:
+  run-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get my code
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install libraries
+        run: pip install -r requirements.txt
+
+      - name: Train the model
+        run: python train.py
+
+      - name: Check app.py has no errors
+        run: python -m py_compile app.py
